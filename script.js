@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const timerEndSound = document.getElementById('timerEndSound');
     const taskCompleteSound = document.getElementById('taskCompleteSound');
     const digitalClock = document.getElementById('digitalClock');
+    const currentDate = document.getElementById('currentDate');
 
     // Timer variables
     let timer;
@@ -51,9 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let seconds = 0;
     updateDisplay();
 
-    // Initialize digital clock
-    updateClock();
-    setInterval(updateClock, 1000);
+    // Initialize clock and date
+    updateClockAndDate();
+    setInterval(updateClockAndDate, 1000);
 
     // Initialize timer mode
     initTimerMode();
@@ -193,13 +194,25 @@ document.addEventListener('DOMContentLoaded', function() {
         timeDisplay.textContent = `${formattedMinutes}:${formattedSeconds}`;
     }
 
-    // Digital Clock Function
-    function updateClock() {
+    // Clock and Date Function
+    function updateClockAndDate() {
         const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
+        
+        // Format time in 12-hour with AM/PM
+        let hours = now.getHours();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // Convert 0 to 12
         const minutes = now.getMinutes().toString().padStart(2, '0');
         const seconds = now.getSeconds().toString().padStart(2, '0');
-        digitalClock.textContent = `${hours}:${minutes}:${seconds}`;
+        
+        // Format date (e.g., "Monday, January 1")
+        const options = { weekday: 'long', month: 'long', day: 'numeric' };
+        const dateString = now.toLocaleDateString(undefined, options);
+        
+        // Update DOM
+        digitalClock.textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+        currentDate.textContent = dateString;
     }
 
     // Initialize timer mode
