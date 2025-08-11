@@ -268,6 +268,167 @@ function resetTimer() {
   startBreakBtn.disabled = false;
   isFocusMode = false;
   isBreakMode = false;
+}    document.body.classList.add('dark-mode');
+    toggleThemeBtn.textContent = '☀️';
+  }
+}
+
+function toggleSettings() {
+  settingsPanel.classList.toggle('open');
+  // Populate settings form with current values
+  focusDurationInput.value = settings.focusDuration;
+  breakDurationInput.value = settings.breakDuration;
+  clockFontSizeSelect.value = settings.clockFontSize;
+  showSecondsCheckbox.checked = settings.showSeconds;
+  enableSoundCheckbox.checked = settings.enableSound;
+  soundSelect.value = settings.sound;
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      console.error(`Error attempting to enable fullscreen: ${err.message}`);
+    });
+    toggleFullscreenBtn.textContent = '⛶';
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+      toggleFullscreenBtn.textContent = '⛶';
+    }
+  }
+}
+
+function updateClockFontSize() {
+  const sizes = {
+    small: '3rem',
+    medium: '4.5rem',
+    large: '6rem'
+  };
+  clockEl.style.fontSize = sizes[settings.clockFontSize] || sizes.medium;
+}
+
+function loadSettings() {
+  const savedSettings = localStorage.getItem('clockSettings');
+  if (savedSettings) {
+    try {
+      settings = JSON.parse(savedSettings);
+      // Update button labels
+      startFocusBtn.innerHTML = `<span>🎯</span><span>Focus (${settings.focusDuration}m)</span>`;
+      startBreakBtn.innerHTML = `<span>☕</span><span>Break (${settings.breakDuration}m)</span>`;
+    } catch (e) {
+      console.error('Failed to parse settings', e);
+    }
+  }
+}
+
+function saveSettings() {
+  settings = {
+    focusDuration: parseInt(focusDurationInput.value) || 25,
+    breakDuration: parseInt(breakDurationInput.value) || 5,
+    clockFontSize: clockFontSizeSelect.value,
+    showSeconds: showSecondsCheckbox.checked,
+    enableSound: enableSoundCheckbox.checked,
+    sound: soundSelect.value
+  };
+  
+  localStorage.setItem('clockSettings', JSON.stringify(settings));
+  
+  // Update UI
+  startFocusBtn.innerHTML = `<span>🎯</span><span>Focus (${settings.focusDuration}m)</span>`;
+  startBreakBtn.innerHTML = `<span>☕</span><span>Break (${settings.breakDuration}m)</span>`;
+  updateClockFontSize();
+  updateClock();
+  
+  toggleSettings();
+}
+
+function startTimer(duration, mode) {
+  clearInterval(timerInterval);
+  
+  // Set mode
+  document.body.classList.remove('focus-mode', 'break-mode');
+  if (mode === 'focus') {
+    document.body.classList.add('focus-mode');
+    isFocusMode = true;
+    isBreakMode = false;
+  } else {
+    document.body.classList.add('break-mode');
+    isBreakMode = true;
+    isFocusMode = false;
+  }
+  
+  // Timer setup
+  timeLeft = duration;
+  totalTime = duration;
+  timerEndTime = Date.now() + duration * 1000;
+  
+  // UI updates
+  document.body.classList.add('timer-active');
+  startFocusBtn.disabled = true;
+  startBreakBtn.disabled = true;
+  
+  updateTimerDisplay();
+  timerInterval = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+  const now = Date.now();
+  timeLeft = Math.max(0, Math.floor((timerEndTime - now) / 1000));
+  
+  if (timeLeft <= 0) {
+    timerComplete();
+    return;
+  }
+  
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const seconds = (timeLeft % 60).toString().padStart(2, '0');
+  
+  timerDisplay.textContent = `${minutes}:${seconds}`;
+  progressBar.style.width = `${100 - (timeLeft / totalTime * 100)}%`;
+}
+
+function timerComplete() {
+  clearInterval(timerInterval);
+  timerDisplay.textContent = isFocusMode ? 'Time for a break!' : 'Ready to focus?';
+  progressBar.style.width = '100%';
+  
+  // Play sound if enabled
+  if (settings.enableSound) {
+    const audio = new Audio(sounds[settings.sound]);
+    audio.play();
+  }
+  
+  // Reset after delay
+  setTimeout(() => {
+    resetTimer();
+  }, 5000);
+}
+
+function togglePauseTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    pauseTimerBtn.innerHTML = '<span>▶️</span><span>Resume</span>';
+  } else {
+    timerEndTime = Date.now() + timeLeft * 1000;
+    timerInterval = setInterval(updateTimer, 1000);
+    pauseTimerBtn.innerHTML = '<span>⏸️</span><span>Pause</span>';
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  document.body.classList.remove('timer-active', 'focus-mode', 'break-mode');
+  timerDisplay.textContent = '';
+  progressBar.style.width = '0%';
+  startFocusBtn.disabled = false;
+  startBreakBtn.disabled = false;
+  isFocusMode = false;
+  isBreakMode = false;
       }        document.body.classList.add('dark-mode');
         toggleThemeBtn.textContent = '☀️';
       }
