@@ -1,192 +1,151 @@
-:root {
-  --primary-color: #2e86de;
-  --focus-color: #e74c3c;
-  --break-color: #2ecc71;
-  --long-break-color: #1abc9c;
-  --bg-color: #f8f9fa;
-  --text-color: #333;
-  --border-color: #ddd;
+:root{
+  --bg: #0f1724;
+  --card: #0b1220;
+  --muted: #9aa4b2;
+  --accent: #4f46e5;
+  --accent-2: #ff7a18;
+  --text: #e6eef6;
+  --glass: rgba(255,255,255,0.04);
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Light theme variables (applied when .light-theme exists on body) */
+body.light-theme{
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --muted: #475569;
+  --accent: #2563eb;
+  --accent-2: #ff6b00;
+  --text: #0b1220;
+  --glass: rgba(0,0,0,0.04);
 }
 
-.container {
-  width: 100%;
-  max-width: 500px;
-  padding: 20px;
-  text-align: center;
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
+  background: linear-gradient(180deg,var(--bg), #03040a 120%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:clamp(12px,2.5vw,28px);
 }
 
-.time-container {
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  margin-bottom: 10px;
+.wrap{
+  width:100%;
+  max-width:900px;
 }
 
-#clock {
-  font-size: 4rem;
-  font-weight: 300;
-  letter-spacing: 1px;
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+.brand{font-size:1.05rem;margin:0}
+.controls{display:flex;gap:8px}
+.controls button{
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.04);
+  color:var(--text);
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:1rem;
+  cursor:pointer;
+}
+.controls button:focus{outline:2px solid rgba(79,70,229,0.35)}
+
+.clock-card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border-radius:18px;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+  border:1px solid rgba(255,255,255,0.03);
 }
 
-#ampm {
-  font-size: 1.5rem;
-  margin-left: 5px;
-  opacity: 0.8;
+.time{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-weight:700;
+  letter-spacing:0.02em;
+}
+.time span{display:inline-block}
+.sep{opacity:0.7}
+.ampm{
+  font-size:0.35em;
+  padding:6px 8px;
+  border-radius:10px;
+  margin-left:8px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:white;
 }
 
-#date {
-  font-size: 1.1rem;
-  color: #666;
-  margin-bottom: 20px;
+/* Large responsive time sizes */
+#hours,#minutes,#seconds{
+  font-variation-settings: 'wght' 700;
 }
 
-.progress-container {
-  width: 100%;
-  height: 6px;
-  background-color: #eee;
-  border-radius: 3px;
-  margin: 15px 0;
-  overflow: hidden;
+/* Scale for different screen sizes and orientations */
+@media (orientation: portrait){
+  .time{font-size:clamp(44px,16vw,110px)}
+  .date{font-size:clamp(14px,3.5vw,18px)}
+}
+@media (orientation: landscape){
+  .time{font-size:clamp(40px,8vh,90px)}
+  .date{font-size:clamp(12px,2.8vh,16px)}
 }
 
-#progress-bar {
-  height: 100%;
-  width: 0%;
-  background-color: var(--primary-color);
+.date{color:var(--muted)}
+
+.settings{
+  margin-top:12px;
+  background:var(--card);
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-width:320px;
+  transform-origin:top right;
+}
+.settings.hidden{display:none}
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.settings h2{margin:0 0 6px 0}
+
+.footer{margin-top:12px;color:var(--muted);font-size:13px}
+
+kbd{background:var(--glass);padding:4px 6px;border-radius:6px}
+
+/* Small-screen adjustments */
+@media (max-width:420px){
+  .controls button{padding:8px;border-radius:8px}
+  .clock-card{padding:18px}
 }
 
-#timer-display {
-  font-size: 2.5rem;
-  font-weight: 400;
-  margin: 20px 0;
-}
+/* Make clock digits monospace look */
+#hours,#minutes,#seconds{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
-.controls {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 15px;
-}
 
-button {
-  background-color: white;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 12px 8px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
+/* small accessibility helpers */
+button[aria-pressed="true"]{box-shadow:0 4px 18px rgba(79,70,229,0.15)}
 
-button:hover {
-  background-color: #f0f0f0;
-}
+/* Smooth transitions for theme change */
+*{transition:background-color 260ms ease, color 260ms ease, border-color 260ms ease}
 
-button:active {
-  transform: scale(0.98);
-}
-
-#start-focus {
-  grid-column: span 2;
-  background-color: var(--focus-color);
-  color: white;
-  border-color: var(--focus-color);
-}
-
-#start-short-break {
-  background-color: var(--break-color);
-  color: white;
-  border-color: var(--break-color);
-}
-
-#start-long-break {
-  background-color: var(--long-break-color);
-  color: white;
-  border-color: var(--long-break-color);
-}
-
-.timer-controls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.timer-controls button {
-  flex: 1;
-  max-width: 150px;
-}
-
-.session-counter {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* Mobile landscape orientation */
-@media (orientation: landscape) and (max-height: 500px) {
-  .container {
-    padding: 10px;
-    transform: scale(0.9);
-  }
-  
-  #clock {
-    font-size: 3rem;
-  }
-  
-  #timer-display {
-    font-size: 2rem;
-    margin: 10px 0;
-  }
-  
-  .controls {
-    grid-template-columns: 1fr;
-  }
-  
-  #start-focus {
-    grid-column: span 1;
-  }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #121212;
-    --text-color: #f8f9fa;
-    --border-color: #444;
-  }
-  
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-  }
-  
-  #date, .session-counter {
-    color: #aaa;
-  }
-  
-  .progress-container {
-    background-color: #333;
-  }
-  
-  button {
-    background-color: #222;
-    color: white;
-    border-color: #444;
-  }
-  
-  button:hover {
-    background-color: #333;
-  }
-}
+/* hide seconds with class */
+.hide-seconds .seconds{display:none}
