@@ -1,13 +1,12 @@
 # Digital Study Clock ⏱️
 
-A responsive, web-based digital clock designed to help you track your study sessions in real time. Built with HTML, CSS, and JavaScript, it features dark/light mode, AM/PM format, full-screen support, and works perfectly on both mobile and desktop devices.
+A responsive, web-based digital clock designed to help you track your study sessions in real time. Built with HTML, CSS, and JavaScript, it features dark/light mode, AM/PM format, and works perfectly on both mobile and desktop devices.
 
 ## ✨ Features
 
 - **Real-time digital clock** display
 - **Dark and Light mode** toggle
 - **AM/PM** or 24-hour time format
-- **Full-screen mode** for distraction-free studying
 - **Responsive design** for portrait and landscape modes
 - Simple and minimal user interface
 
@@ -15,7 +14,7 @@ A responsive, web-based digital clock designed to help you track your study sess
 
 - **HTML5** – Structure and content
 - **CSS3** – Styling and layout
-- **JavaScript (Vanilla)** – Functionality and interactivity
+- **JavaScript** – Functionality and interactivity
 
 ## 🚀 Live Demo
 
