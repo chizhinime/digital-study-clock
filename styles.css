@@ -8,6 +8,9 @@
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     --task-complete: #e0f7fa;
     --border-color: #e0e0e0;
+    --focus-color: #8b5fbf;
+    --break-color: #4caf50;
+    --long-break-color: #2196f3;
 }
 
 [data-theme="dark"] {
@@ -20,6 +23,9 @@
     --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     --task-complete: #2d3748;
     --border-color: #3a3a4a;
+    --focus-color: #8b5fbf;
+    --break-color: #4caf50;
+    --long-break-color: #2196f3;
 }
 
 * {
@@ -51,6 +57,19 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    position: relative;
+}
+
+.clock {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.header-controls {
+    display: flex;
+    gap: 10px;
 }
 
 h1, h2 {
@@ -83,14 +102,38 @@ h1, h2 {
     padding: 30px;
     text-align: center;
     box-shadow: var(--shadow);
+    transition: border-color 0.3s;
+}
+
+.timer-container.focus-mode {
+    border: 2px solid var(--focus-color);
+}
+
+.timer-container.break-mode {
+    border: 2px solid var(--break-color);
+}
+
+.timer-container.long-break-mode {
+    border: 2px solid var(--long-break-color);
 }
 
 .timer-display {
     font-size: 5rem;
     font-weight: 700;
-    color: var(--primary-color);
     font-family: 'Courier New', monospace;
     margin: 10px 0;
+}
+
+.focus-mode .timer-display {
+    color: var(--focus-color);
+}
+
+.break-mode .timer-display {
+    color: var(--break-color);
+}
+
+.long-break-mode .timer-display {
+    color: var(--long-break-color);
 }
 
 .session-info {
@@ -125,6 +168,12 @@ h1, h2 {
 .control-btn:hover {
     background-color: var(--accent-color);
     transform: scale(1.05);
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .tasks-container, .stats-container {
@@ -334,5 +383,16 @@ h1, h2 {
     
     .stats {
         grid-template-columns: 1fr;
+    }
+    
+    .header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .clock {
+        order: 3;
+        width: 100%;
+        text-align: center;
     }
 }
