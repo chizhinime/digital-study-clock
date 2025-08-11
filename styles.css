@@ -1,151 +1,40 @@
-:root{
-  --bg: #0f1724;
-  --card: #0b1220;
-  --muted: #9aa4b2;
-  --accent: #4f46e5;
-  --accent-2: #ff7a18;
-  --text: #e6eef6;
-  --glass: rgba(255,255,255,0.04);
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #121212;
+    color: #fff;
+    margin: 0;
 }
 
-/* Light theme variables (applied when .light-theme exists on body) */
-body.light-theme{
-  --bg: #f6f8fb;
-  --card: #ffffff;
-  --muted: #475569;
-  --accent: #2563eb;
-  --accent-2: #ff6b00;
-  --text: #0b1220;
-  --glass: rgba(0,0,0,0.04);
+.clock-container {
+    text-align: center;
+    background-color: #1e1e1e;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
-  background: linear-gradient(180deg,var(--bg), #03040a 120%);
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:clamp(12px,2.5vw,28px);
+.digital-clock {
+    font-size: 5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
 
-.wrap{
-  width:100%;
-  max-width:900px;
+.ampm {
+    font-size: 2rem;
+    margin-left: 10px;
+    vertical-align: middle;
 }
 
-.topbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:18px;
-}
-.brand{font-size:1.05rem;margin:0}
-.controls{display:flex;gap:8px}
-.controls button{
-  background:var(--glass);
-  border:1px solid rgba(255,255,255,0.04);
-  color:var(--text);
-  padding:8px 10px;
-  border-radius:10px;
-  font-size:1rem;
-  cursor:pointer;
-}
-.controls button:focus{outline:2px solid rgba(79,70,229,0.35)}
-
-.clock-card{
-  background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-  border-radius:18px;
-  padding:24px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-  box-shadow: 0 6px 30px rgba(2,6,23,0.6);
-  border:1px solid rgba(255,255,255,0.03);
+.date-display {
+    font-size: 1.5rem;
+    color: #aaa;
 }
 
-.time{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  font-weight:700;
-  letter-spacing:0.02em;
+/* Optional: Add a glow effect */
+.digital-clock span {
+    text-shadow: 0 0 10px #0ff;
 }
-.time span{display:inline-block}
-.sep{opacity:0.7}
-.ampm{
-  font-size:0.35em;
-  padding:6px 8px;
-  border-radius:10px;
-  margin-left:8px;
-  background:linear-gradient(90deg,var(--accent),var(--accent-2));
-  color:white;
-}
-
-/* Large responsive time sizes */
-#hours,#minutes,#seconds{
-  font-variation-settings: 'wght' 700;
-}
-
-/* Scale for different screen sizes and orientations */
-@media (orientation: portrait){
-  .time{font-size:clamp(44px,16vw,110px)}
-  .date{font-size:clamp(14px,3.5vw,18px)}
-}
-@media (orientation: landscape){
-  .time{font-size:clamp(40px,8vh,90px)}
-  .date{font-size:clamp(12px,2.8vh,16px)}
-}
-
-.date{color:var(--muted)}
-
-.settings{
-  margin-top:12px;
-  background:var(--card);
-  border-radius:12px;
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  max-width:320px;
-  transform-origin:top right;
-}
-.settings.hidden{display:none}
-.row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-.settings h2{margin:0 0 6px 0}
-
-.footer{margin-top:12px;color:var(--muted);font-size:13px}
-
-kbd{background:var(--glass);padding:4px 6px;border-radius:6px}
-
-/* Small-screen adjustments */
-@media (max-width:420px){
-  .controls button{padding:8px;border-radius:8px}
-  .clock-card{padding:18px}
-}
-
-/* Make clock digits monospace look */
-#hours,#minutes,#seconds{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-
-
-/* small accessibility helpers */
-button[aria-pressed="true"]{box-shadow:0 4px 18px rgba(79,70,229,0.15)}
-
-/* Smooth transitions for theme change */
-*{transition:background-color 260ms ease, color 260ms ease, border-color 260ms ease}
-
-/* hide seconds with class */
-.hide-seconds .seconds{display:none}
