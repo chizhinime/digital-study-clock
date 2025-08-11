@@ -1,1 +1,26 @@
-# Digital-Study-Clock
+# Digital Study Clock ⏱️
+
+A responsive, web-based digital clock designed to help you track your study sessions in real time. Built with HTML, CSS, and JavaScript, it features dark/light mode, AM/PM format, full-screen support, and works perfectly on both mobile and desktop devices.
+
+## ✨ Features
+
+- **Real-time digital clock** display
+- **Dark and Light mode** toggle
+- **AM/PM** or 24-hour time format
+- **Full-screen mode** for distraction-free studying
+- **Responsive design** for portrait and landscape modes
+- Simple and minimal user interface
+
+## 🛠️ Technologies Used
+
+- **HTML5** – Structure and content
+- **CSS3** – Styling and layout
+- **JavaScript (Vanilla)** – Functionality and interactivity
+
+## 🚀 Live Demo
+
+[View Live Demo](https://digital-study-clock.vercel.app/)  
+*(Replace with your deployed link, e.g., GitHub Pages or Vercel)*
+
+## 📂 Project Structure
+
