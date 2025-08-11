@@ -10,16 +10,19 @@
 <body>
     <div class="app-container">
         <div class="header">
+            <div class="clock" id="digitalClock">00:00:00</div>
             <h1>Study Timer</h1>
-            <button id="themeToggle" class="theme-toggle">
-                <i class="fas fa-moon"></i>
-            </button>
-            <button id="settingsToggle" class="settings-toggle">
-                <i class="fas fa-cog"></i>
-            </button>
+            <div class="header-controls">
+                <button id="themeToggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="settingsToggle" class="settings-toggle">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
         </div>
 
-        <div class="timer-container">
+        <div class="timer-container focus-mode" id="timerContainer">
             <div class="timer-display" id="time">25:00</div>
             <div class="session-info">
                 <span id="sessionType">Focus Session</span>
@@ -29,7 +32,7 @@
                 <button id="startBtn" class="control-btn">
                     <i class="fas fa-play"></i>
                 </button>
-                <button id="pauseBtn" class="control-btn">
+                <button id="pauseBtn" class="control-btn" disabled>
                     <i class="fas fa-pause"></i>
                 </button>
                 <button id="resetBtn" class="control-btn">
@@ -98,7 +101,7 @@
                 </div>
                 <div class="setting-group">
                     <label>
-                        <input type="checkbox" id="playSounds">
+                        <input type="checkbox" id="playSounds" checked>
                         Play notification sounds
                     </label>
                 </div>
