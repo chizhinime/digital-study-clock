@@ -1,12 +1,38 @@
+/* Base Styles */
 body {
     font-family: 'Arial', sans-serif;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-color: #121212;
     color: #fff;
     margin: 0;
+    transition: background-color 0.3s ease;
+}
+
+.controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+button, select {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background-color: #444;
 }
 
 .clock-container {
@@ -15,6 +41,8 @@ body {
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
 }
 
 .digital-clock {
@@ -34,7 +62,126 @@ body {
     color: #aaa;
 }
 
-/* Optional: Add a glow effect */
+/* Number Animation */
 .digital-clock span {
+    display: inline-block;
+    transition: transform 0.3s ease, opacity 0.3s ease;
     text-shadow: 0 0 10px #0ff;
+}
+
+.digital-clock span.changing {
+    transform: translateY(-10px);
+    opacity: 0;
+}
+
+/* Alarm Controls */
+.alarm-controls {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+    max-width: 90%;
+}
+
+.alarm-controls h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.alarm-controls input[type="time"] {
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    margin-right: 10px;
+    background-color: #333;
+    color: white;
+}
+
+/* Light Mode Styles */
+body.light-mode {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.light-mode .clock-container,
+.light-mode .alarm-controls {
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .date-display {
+    color: #666;
+}
+
+.light-mode .digital-clock span {
+    text-shadow: 0 0 5px #0077ff;
+}
+
+.light-mode button,
+.light-mode select,
+.light-mode input[type="time"] {
+    background-color: #ddd;
+    color: #333;
+}
+
+.light-mode button:hover {
+    background-color: #ccc;
+}
+
+/* Alarm Active State */
+.alarm-active {
+    animation: alarmFlash 0.5s infinite alternate;
+}
+
+@keyframes alarmFlash {
+    from { background-color: #121212; }
+    to { background-color: #ff0000; }
+}
+
+.light-mode.alarm-active {
+    animation: alarmFlashLight 0.5s infinite alternate;
+}
+
+@keyframes alarmFlashLight {
+    from { background-color: #f0f0f0; }
+    to { background-color: #ff9999; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .digital-clock {
+        font-size: 3rem;
+    }
+    
+    .ampm {
+        font-size: 1.5rem;
+    }
+    
+    .date-display {
+        font-size: 1rem;
+    }
+    
+    .clock-container {
+        width: 90%;
+        padding: 20px;
+    }
+    
+    .alarm-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .alarm-controls input[type="time"] {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 80%;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
 }
