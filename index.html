@@ -1,56 +1,427 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Digital Clock — Techies</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Digital Clock</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #0a84ff;
+            --text-color: #ffffff;
+            --bg-color: #1c1c1e;
+            --panel-bg: #2c2c2e;
+            --panel-shadow: rgba(0, 0, 0, 0.4);
+            --success-color: #30d158;
+            --danger-color: #ff453a;
+            --warning-color: #ffd60a;
+            --transition: all 0.3s ease;
+        }
+
+        .light-mode {
+            --primary-color: #007aff;
+            --text-color: #000000;
+            --bg-color: #f2f2f7;
+            --panel-bg: #ffffff;
+            --panel-shadow: rgba(0, 0, 0, 0.1);
+            --success-color: #34c759;
+            --danger-color: #ff3b30;
+            --warning-color: #ffcc00;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 95%;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .clock-container {
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px var(--panel-shadow);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        .clock-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, var(--primary-color), transparent);
+            transform: rotate(0deg);
+            animation: rotate 6s linear infinite;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: clamp(3rem, 12vw, 6rem);
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            letter-spacing: -2px;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(10, 132, 255, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .am-pm {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 600;
+            align-self: flex-end;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .date-display {
+            text-align: center;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--panel-bg);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px var(--panel-shadow);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px var(--panel-shadow);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .mode-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .fullscreen-btn {
+            background: var(--warning-color);
+            color: #000;
+        }
+
+        .settings-btn {
+            background: var(--panel-bg);
+            border: 2px solid var(--primary-color);
+        }
+
+        .indicator {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            opacity: 0.3;
+        }
+
+        .dot.active {
+            opacity: 1;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            width: 100%;
+        }
+
+        /* Animation for time change */
+        .time-unit {
+            position: relative;
+            display: inline-block;
+            min-width: 0.7em;
+            text-align: center;
+        }
+
+        .time-unit.changing {
+            animation: flip 0.4s ease;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(90deg); opacity: 0; }
+            51% { opacity: 0; }
+            100% { transform: rotateX(0deg); opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .clock-container {
+                padding: 20px;
+            }
+            
+            .time-display {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                transform: scale(0.85);
+            }
+            
+            .footer {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-  <main class="wrap" id="app">
-    <header class="topbar">
-      <h1 class="brand">Techies Digital Clock</h1>
-      <div class="controls">
-        <button id="themeToggle" aria-pressed="false" title="Toggle dark / light">🌗</button>
-        <button id="fullToggle" title="Toggle full screen">⛶</button>
-        <button id="settingsBtn" aria-expanded="false" title="Open settings">⚙︎</button>
-      </div>
-    </header>
+    <div class="container">
+        <div class="clock-container">
+            <div class="time-display">
+                <span id="hours" class="time-unit">00</span>
+                <span>:</span>
+                <span id="minutes" class="time-unit">00</span>
+                <span>:</span>
+                <span id="seconds" class="time-unit">00</span>
+                <span class="am-pm" id="am-pm">AM</span>
+            </div>
+            <div class="date-display">
+                <span id="date">Monday, January 1, 2023</span>
+            </div>
+            
+            <div class="indicator">
+                <div class="dot active" id="dot1"></div>
+                <div class="dot" id="dot2"></div>
+                <div class="dot" id="dot3"></div>
+                <div class="dot" id="dot4"></div>
+                <div class="dot" id="dot5"></div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn mode-btn" id="mode-toggle">
+                    <i class="fas fa-moon"></i> Dark Mode
+                </button>
+                <button class="btn fullscreen-btn" id="fullscreen-toggle">
+                    <i class="fas fa-expand"></i> Full Screen
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Digital Clock for Techies | Made with HTML, CSS & JavaScript
+        </div>
+    </div>
 
-    <section class="clock-card" role="application" aria-label="Digital clock">
-      <div class="time" id="time">
-        <span id="hours">00</span>
-        <span class="sep">:</span>
-        <span id="minutes">00</span>
-        <span class="sep">:</span>
-        <span id="seconds">00</span>
-        <span class="ampm" id="ampm">AM</span>
-      </div>
-      <div class="date" id="date">Loading date...</div>
-    </section>
-
-    <aside class="settings" id="settings" aria-hidden="true">
-      <h2>Settings</h2>
-      <label class="row">
-        <span>Show seconds</span>
-        <input type="checkbox" id="showSeconds" checked>
-      </label>
-      <label class="row">
-        <span>Use leading zero</span>
-        <input type="checkbox" id="leadingZero" checked>
-      </label>
-      <label class="row">
-        <span>Use 12-hour (AM/PM)</span>
-        <input type="checkbox" id="use12Hour" checked>
-      </label>
-      <div class="row">
-        <button id="resetPrefs">Reset preferences</button>
-      </div>
-    </aside>
-
-    <footer class="footer">Tip: press <kbd>F</kbd> for full-screen, <kbd>T</kbd> to toggle theme.</footer>
-  </main>
-
-  <script src="script.js" defer></script>
+    <script>
+        // DOM Elements
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        const amPmElement = document.getElementById('am-pm');
+        const dateElement = document.getElementById('date');
+        const modeToggle = document.getElementById('mode-toggle');
+        const fullscreenToggle = document.getElementById('fullscreen-toggle');
+        const dots = document.querySelectorAll('.dot');
+        const body = document.body;
+        
+        // Previous values for animation
+        let prevHours = '';
+        let prevMinutes = '';
+        let prevSeconds = '';
+        let currentDot = 0;
+        
+        // Initialize clock
+        function updateClock() {
+            const now = new Date();
+            
+            // Format time (12-hour with AM/PM)
+            let hours = now.getHours();
+            const amPm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            
+            // Format with leading zeros
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            // Format date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const date = now.toLocaleDateString('en-US', options);
+            
+            // Update time elements with animation if changed
+            updateTimeUnit(hoursElement, String(hours).padStart(2, '0'), prevHours);
+            updateTimeUnit(minutesElement, minutes, prevMinutes);
+            updateTimeUnit(secondsElement, seconds, prevSeconds);
+            
+            // Update other elements
+            amPmElement.textContent = amPm;
+            dateElement.textContent = date;
+            
+            // Update previous values
+            prevHours = String(hours).padStart(2, '0');
+            prevMinutes = minutes;
+            prevSeconds = seconds;
+            
+            // Update dot indicator
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[currentDot].classList.add('active');
+            currentDot = (currentDot + 1) % dots.length;
+        }
+        
+        // Update time unit with animation if changed
+        function updateTimeUnit(element, newValue, prevValue) {
+            if (newValue !== prevValue) {
+                element.textContent = newValue;
+                element.classList.add('changing');
+                setTimeout(() => {
+                    element.classList.remove('changing');
+                }, 400);
+            }
+        }
+        
+        // Toggle dark/light mode
+        function toggleTheme() {
+            body.classList.toggle('light-mode');
+            const icon = modeToggle.querySelector('i');
+            const text = modeToggle.querySelector('span') || document.createElement('span');
+            
+            if (body.classList.contains('light-mode')) {
+                icon.className = 'fas fa-sun';
+                if (!text.textContent) {
+                    text.textContent = ' Light Mode';
+                    modeToggle.appendChild(text);
+                } else {
+                    text.textContent = ' Light Mode';
+                }
+            } else {
+                icon.className = 'fas fa-moon';
+                if (!text.textContent) {
+                    text.textContent = ' Dark Mode';
+                    modeToggle.appendChild(text);
+                } else {
+                    text.textContent = ' Dark Mode';
+                }
+            }
+        }
+        
+        // Toggle fullscreen mode
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+                fullscreenToggle.innerHTML = '<i class="fas fa-compress"></i> Exit Full Screen';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i> Full Screen';
+                }
+            }
+        }
+        
+        // Event Listeners
+        modeToggle.addEventListener('click', toggleTheme);
+        fullscreenToggle.addEventListener('click', toggleFullscreen);
+        
+        // Initialize
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        // Handle fullscreen change to update button text
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i> Full Screen';
+            }
+        });
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Toggle theme with 'T' key
+            if (e.key === 't' || e.key === 'T') {
+                toggleTheme();
+            }
+            
+            // Toggle fullscreen with 'F' key
+            if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+    </script>
 </body>
 </html>
