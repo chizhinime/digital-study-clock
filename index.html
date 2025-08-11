@@ -2,84 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>StudyFocus - Productivity Clock</title>
-  <meta name="description" content="Full-screen study clock with Pomodoro timer and productivity features">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Clock</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="orientation-message">
-    <div>
-      <p>For the best experience, please rotate your device to landscape mode.</p>
-      <p>⬅️ Rotate your phone sideways ➡️</p>
-    </div>
-  </div>
-
-  <button class="dark-mode-btn" id="dark-mode-btn">
-    <span id="dark-mode-icon">🌙</span>
-  </button>
-  
-  <button class="settings-btn" id="settings-btn">
-    <span class="settings-icon">⚙️</span>
-  </button>
-  
-  <div class="settings-panel" id="settings-panel">
-    <h2>Settings</h2>
-    
-    <div class="settings-group">
-      <h3>Timer Durations (minutes)</h3>
-      <div class="settings-row">
-        <label for="focus-duration">Focus:</label>
-        <input type="number" id="focus-duration" min="1" max="120" value="25">
-      </div>
-      <div class="settings-row">
-        <label for="short-break-duration">Short Break:</label>
-        <input type="number" id="short-break-duration" min="1" max="30" value="5">
-      </div>
-      <div class="settings-row">
-        <label for="long-break-duration">Long Break:</label>
-        <input type="number" id="long-break-duration" min="1" max="60" value="15">
-      </div>
-      <div class="settings-row">
-        <label for="sessions-before-long-break">Sessions before long break:</label>
-        <input type="number" id="sessions-before-long-break" min="1" max="10" value="4">
-      </div>
-    </div>
-    
-    <div class="settings-group">
-      <h3>Clock Options</h3>
-      <div class="settings-row">
-        <label for="time-format">Time Format:</label>
-        <select id="time-format">
-          <option value="12">12-hour</option>
-          <option value="24">24-hour</option>
-        </select>
-      </div>
-    </div>
-    
-    <div class="settings-group">
-      <h3>Features</h3>
-      <div class="settings-row">
-        <label for="auto-start">Auto-start next timer:</label>
-        <input type="checkbox" id="auto-start">
-      </div>
-      <div class="settings-row">
-        <label for="sound-enabled">Enable sounds:</label>
-        <input type="checkbox" id="sound-enabled" checked>
-      </div>
-      <div class="settings-row">
-        <label for="notifications-enabled">Enable notifications:</label>
-        <input type="checkbox" id="notifications-enabled" checked>
-      </div>
-      <div class="settings-row">
-        <label for="dark-mode">Dark mode:</label>
-        <input type="checkbox" id="dark-mode">
-      </div>
-    </div>
-    
-    <button id="save-settings" style="width: 100%; margin-top: 15px;">Save Settings</button>
-  </div>
-  
   <div class="container">
     <div class="time-container">
       <div id="clock">00:00</div>
@@ -91,12 +18,12 @@
       <div id="progress-bar"></div>
     </div>
     
-    <div id="timer-display"></div>
+    <div id="timer-display">25:00</div>
     
     <div class="controls">
-      <button id="start-focus">Start Focus</button>
-      <button id="start-short-break">Short Break</button>
-      <button id="start-long-break">Long Break</button>
+      <button id="start-focus">Focus (25m)</button>
+      <button id="start-short-break">Short Break (5m)</button>
+      <button id="start-long-break">Long Break (15m)</button>
     </div>
     
     <div class="timer-controls">
@@ -104,18 +31,8 @@
       <button id="reset-timer">Reset</button>
     </div>
     
-    <div class="study-tips">
-      <p id="study-tip">Tip: Try the Pomodoro technique - 25 minutes focused work followed by a 5 minute break.</p>
-    </div>
+    <div class="session-counter">Session: 0/4</div>
   </div>
-  
-  <div class="session-counter" id="session-counter">
-    Session: 0/4
-  </div>
-  
-  <button class="fullscreen-btn" id="fullscreen-btn">
-    <span>⛶</span>
-  </button>
 
   <script src="script.js"></script>
 </body>
