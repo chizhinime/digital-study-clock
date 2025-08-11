@@ -4,22 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aesthetic Study Timer</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="timer-display" id="time">25:00</div>
-        <div class="controls">
-            <button id="startBtn"><i class="fas fa-play"></i></button>
-            <button id="pauseBtn"><i class="fas fa-pause"></i></button>
-            <button id="resetBtn"><i class="fas fa-redo"></i></button>
+    <div class="app-container">
+        <div class="header">
+            <h1>Study Timer</h1>
+            <button id="themeToggle" class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button id="settingsToggle" class="settings-toggle">
+                <i class="fas fa-cog"></i>
+            </button>
         </div>
-        <div class="session-type" id="sessionType">Focus Session</div>
-        <div class="toggle-theme">
-            <i class="fas fa-moon" id="themeToggle"></i>
+
+        <div class="timer-container">
+            <div class="timer-display" id="time">25:00</div>
+            <div class="session-info">
+                <span id="sessionType">Focus Session</span>
+                <span id="sessionCount">#1</span>
+            </div>
+            <div class="timer-controls">
+                <button id="startBtn" class="control-btn">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button id="pauseBtn" class="control-btn">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button id="resetBtn" class="control-btn">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button id="skipBtn" class="control-btn">
+                    <i class="fas fa-forward"></i>
+                </button>
+            </div>
         </div>
+
+        <div class="tasks-container">
+            <h2>Tasks</h2>
+            <div class="task-input">
+                <input type="text" id="taskInput" placeholder="Add a new task...">
+                <button id="addTaskBtn"><i class="fas fa-plus"></i></button>
+            </div>
+            <ul class="task-list" id="taskList"></ul>
+            <div class="task-stats">
+                <span id="completedTasks">0</span>/<span id="totalTasks">0</span> tasks completed
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <h2>Today's Progress</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="focusSessions">0</span>
+                    <span class="stat-label">Focus Sessions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="totalFocusTime">0</span>
+                    <span class="stat-label">Minutes Focused</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="tasksCompleted">0</span>
+                    <span class="stat-label">Tasks Done</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-modal" id="settingsModal">
+            <div class="settings-content">
+                <h2>Settings</h2>
+                <div class="setting-group">
+                    <label for="focusDuration">Focus Duration (minutes):</label>
+                    <input type="number" id="focusDuration" min="1" max="60" value="25">
+                </div>
+                <div class="setting-group">
+                    <label for="breakDuration">Break Duration (minutes):</label>
+                    <input type="number" id="breakDuration" min="1" max="30" value="5">
+                </div>
+                <div class="setting-group">
+                    <label for="longBreakDuration">Long Break Duration (minutes):</label>
+                    <input type="number" id="longBreakDuration" min="1" max="60" value="15">
+                </div>
+                <div class="setting-group">
+                    <label for="sessionsBeforeLongBreak">Sessions before long break:</label>
+                    <input type="number" id="sessionsBeforeLongBreak" min="1" max="10" value="4">
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="autoStartNextSession">
+                        Auto-start next session
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="playSounds">
+                        Play notification sounds
+                    </label>
+                </div>
+                <div class="settings-buttons">
+                    <button id="saveSettingsBtn">Save</button>
+                    <button id="cancelSettingsBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <audio id="timerEndSound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"></audio>
+        <audio id="taskCompleteSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
