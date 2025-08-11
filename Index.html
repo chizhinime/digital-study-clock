@@ -1,1 +1,94 @@
+<body>
+  <div class="clock-container">
+    <div id="clock">00:00:00</div>
+    <div id="date">Loading date...</div>
+    
+    <div id="timer-display"></div>
+    <div class="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+    
+    <div class="controls">
+      <button id="toggleFormat">
+        <span id="format-icon">🕛</span>
+        <span id="format-text">12-hour</span>
+      </button>
+      <button id="startFocus">
+        <span>🎯</span>
+        <span>Focus (25m)</span>
+      </button>
+      <button id="startBreak">
+        <span>☕</span>
+        <span>Break (5m)</span>
+      </button>
+    </div>
+    
+    <div class="timer-controls">
+      <button id="pauseTimer">
+        <span>⏸️</span>
+        <span>Pause</span>
+      </button>
+      <button id="resetTimer">
+        <span>🔄</span>
+        <span>Reset</span>
+      </button>
+    </div>
+  </div>
 
+  <button id="toggleTheme">🌙</button>
+  <button id="toggleSettings">⚙️</button>
+  <button id="toggleFullscreen">⛶</button>
+
+  <!-- Settings Panel -->
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <h2 class="settings-title">Settings</h2>
+      <button class="close-settings" id="closeSettings">×</button>
+    </div>
+    
+    <div class="settings-group">
+      <h3 class="settings-group-title">Timer Settings</h3>
+      <div class="setting-option">
+        <label for="focusDuration">Focus Duration (minutes):</label>
+        <input type="number" id="focusDuration" min="1" max="120" value="25">
+      </div>
+      <div class="setting-option">
+        <label for="breakDuration">Break Duration (minutes):</label>
+        <input type="number" id="breakDuration" min="1" max="30" value="5">
+      </div>
+    </div>
+    
+    <div class="settings-group">
+      <h3 class="settings-group-title">Display Settings</h3>
+      <div class="setting-option">
+        <label for="clockFontSize">Clock Font Size:</label>
+        <select id="clockFontSize">
+          <option value="small">Small</option>
+          <option value="medium" selected>Medium</option>
+          <option value="large">Large</option>
+        </select>
+      </div>
+      <div class="setting-option">
+        <label for="showSeconds">Show Seconds:</label>
+        <input type="checkbox" id="showSeconds" checked>
+      </div>
+    </div>
+    
+    <div class="settings-group">
+      <h3 class="settings-group-title">Notification Settings</h3>
+      <div class="setting-option">
+        <label for="enableSound">Enable Sound:</label>
+        <input type="checkbox" id="enableSound" checked>
+      </div>
+      <div class="setting-option">
+        <label for="soundSelect">Notification Sound:</label>
+        <select id="soundSelect">
+          <option value="bell">Bell</option>
+          <option value="beep" selected>Beep</option>
+          <option value="chime">Chime</option>
+        </select>
+      </div>
+    </div>
+    
+    <button class="save-settings" id="saveSettings">Save Settings</button>
+  </div>
