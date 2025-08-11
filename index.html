@@ -1,1 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Focus Timer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
+        :root {
+            --primary-color: #0a84ff;
+            --focus-color: #30d158;
+            --break-color: #ff9f0a;
+            --text-color: #ffffff;
+            --bg-color: #0f0f1a;
+            --panel-bg: #1c1c2e;
+            --panel-shadow: rgba(0, 0, 0, 0.4);
+            --transition: all 0.3s ease;
+        }
+
+        .light-mode {
+            --primary-color: #007aff;
+            --focus-color: #34c759;
+            --break-color: #ff9500;
+            --text-color: #333333;
+            --bg-color: #f0f2f8;
+            --panel-bg: #ffffff;
+            --panel-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 95%;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--focus-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .clock-container {
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px var(--panel-shadow);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        .mode-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .mode-btn {
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(128, 128, 128, 0.15);
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .mode-btn.active {
+            background: transparent;
+        }
+
+        .focus-btn.active {
+            border-color: var(--focus-color);
+            color: var(--focus-color);
+            box-shadow: 0 0 15px rgba(48, 209, 88, 0.3);
+        }
+
+        .break-btn.active {
+            border-color: var(--break-color);
+            color: var(--break-color);
+            box-shadow: 0 0 15px rgba(255, 159, 10, 0.3);
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: clamp(3rem, 12vw, 5rem);
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            letter-spacing: -2px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .time-unit {
+            min-width: 1.4em;
+            text-align: center;
+        }
+
+        .am-pm {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            font-weight: 600;
+            align-self: flex-end;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .session-info {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.3rem;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        .session-info .session-type {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .session-info.focus .session-type {
+            color: var(--focus-color);
+        }
+
+        .session-info.break .session-type {
+            color: var(--break-color);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(128, 128, 128, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 25px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s linear;
+        }
+
+        .focus .progress-bar {
+            background: var(--focus-color);
+        }
+
+        .break .progress-bar {
+            background: var(--break-color);
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--panel-bg);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px var(--panel-shadow);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px var(--panel-shadow);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .start-btn {
+            background: var(--focus-color);
+            color: #000;
+        }
+
+        .break-btn-control {
+            background: var(--break-color);
+            color: #000;
+        }
+
+        .reset-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .settings-btn {
+            background: var(--panel-bg);
+            border: 2px solid var(--primary-color);
+        }
+
+        .system-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .system-btn {
+            background: rgba(128, 128, 128, 0.1);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            color: var(--text-color);
+        }
+
+        .system-btn:hover {
+            background: rgba(128, 128, 128, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Animation for time change */
+        .time-unit.changing {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .clock-container {
+                padding: 25px 20px;
+            }
+            
+            .time-display {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+            
+            .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                transform: scale(0.9);
+            }
+        }
+
+        /* Tech elements */
+        .tech-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(10, 132, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(10, 132, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .circuit-line {
+            position: absolute;
+            height: 2px;
+            background: var(--primary-color);
+            opacity: 0.1;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FOCUS<span style="color: var(--text-color)">.</span>TECH</h1>
+            <p>Digital Timer for Productive Developers</p>
+        </div>
+        
+        <div class="clock-container focus">
+            <div class="tech-grid"></div>
+            
+            <div class="mode-indicator">
+                <div class="mode-btn focus-btn active">FOCUS</div>
+                <div class="mode-btn break-btn">BREAK</div>
+            </div>
+            
+            <div class="time-display">
+                <span id="minutes" class="time-unit">25</span>
+                <span>:</span>
+                <span id="seconds" class="time-unit">00</span>
+            </div>
+            
+            <div class="session-info focus">
+                <span class="session-type">Focus</span> Session - <span id="session-count">1</span> of 4
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+            
+            <div class="timer-controls">
+                <button class="btn start-btn" id="start-btn">
+                    <i class="fas fa-play"></i> Start Focus
+                </button>
+                <button class="btn break-btn-control" id="skip-btn">
+                    <i class="fas fa-step-forward"></i> Skip to Break
+                </button>
+                <button class="btn reset-btn" id="reset-btn">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+            
+            <div class="system-controls">
+                <button class="system-btn" id="mode-toggle">
+                    <i class="fas fa-moon"></i> Dark Mode
+                </button>
+                <button class="system-btn" id="fullscreen-toggle">
+                    <i class="fas fa-expand"></i> Full Screen
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Designed for Developers • Press F for Fullscreen • T for Dark Mode
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        const sessionCountElement = document.getElementById('session-count');
+        const progressBar = document.getElementById('progress-bar');
+        const startBtn = document.getElementById('start-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const modeToggle = document.getElementById('mode-toggle');
+        const fullscreenToggle = document.getElementById('fullscreen-toggle');
+        const focusBtn = document.querySelector('.focus-btn');
+        const breakBtn = document.querySelector('.break-btn');
+        const sessionInfo = document.querySelector('.session-info');
+        const clockContainer = document.querySelector('.clock-container');
+        const body = document.body;
+        
+        // Timer variables
+        let timerInterval;
+        let isRunning = false;
+        let isFocusMode = true;
+        let totalSeconds = 25 * 60; // 25 minutes
+        let initialTime = totalSeconds;
+        let sessionCount = 1;
+        const focusTime = 25 * 60; // 25 minutes in seconds
+        const breakTime = 5 * 60;  // 5 minutes in seconds
+        
+        // Initialize
+        updateDisplay();
+        
+        // Update timer display
+        function updateDisplay() {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            
+            minutesElement.textContent = minutes.toString().padStart(2, '0');
+            secondsElement.textContent = seconds.toString().padStart(2, '0');
+            
+            // Update progress bar
+            const progressPercent = 100 - (totalSeconds / initialTime * 100);
+            progressBar.style.width = `${progressPercent}%`;
+            
+            // Update session info
+            sessionCountElement.textContent = sessionCount;
+        }
+        
+        // Start or pause the timer
+        function toggleTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                startBtn.innerHTML = '<i class="fas fa-play"></i> ' + 
+                    (isFocusMode ? 'Resume Focus' : 'Resume Break');
+            } else {
+                isRunning = true;
+                startBtn.innerHTML = '<i class="fas fa-pause"></i> ' + 
+                    (isFocusMode ? 'Pause Focus' : 'Pause Break');
+                
+                timerInterval = setInterval(() => {
+                    totalSeconds--;
+                    updateDisplay();
+                    
+                    if (totalSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        
+                        // Play sound
+                        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYiMkJSWmJqcnqCipKWmp6ipqqusrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8=');
+                        audio.play();
+                        
+                        if (isFocusMode) {
+                            // After focus session, show notification
+                            if (sessionCount < 4) {
+                                alert("Focus session completed! Time for a short break.");
+                                switchToBreak();
+                            } else {
+                                alert("Great job! You've completed all focus sessions. Take a longer break!");
+                                switchToBreak(true);
+                            }
+                        } else {
+                            // After break session
+                            alert("Break time is over! Ready for your next focus session?");
+                            switchToFocus();
+                        }
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Switch to focus mode
+        function switchToFocus() {
+            isFocusMode = true;
+            totalSeconds = focusTime;
+            initialTime = focusTime;
+            isRunning = false;
+            clearInterval(timerInterval);
+            
+            // Update UI
+            clockContainer.classList.remove('break');
+            clockContainer.classList.add('focus');
+            sessionInfo.classList.remove('break');
+            sessionInfo.classList.add('focus');
+            focusBtn.classList.add('active');
+            breakBtn.classList.remove('active');
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Start Focus';
+            
+            updateDisplay();
+        }
+        
+        // Switch to break mode (longBreak for after 4 sessions)
+        function switchToBreak(longBreak = false) {
+            isFocusMode = false;
+            totalSeconds = longBreak ? 15 * 60 : breakTime;
+            initialTime = totalSeconds;
+            isRunning = false;
+            clearInterval(timerInterval);
+            
+            // Update UI
+            clockContainer.classList.remove('focus');
+            clockContainer.classList.add('break');
+            sessionInfo.classList.remove('focus');
+            sessionInfo.classList.add('break');
+            focusBtn.classList.remove('active');
+            breakBtn.classList.add('active');
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Start Break';
+            
+            // Increment session count after focus session
+            if (!longBreak) {
+                sessionCount = sessionCount < 4 ? sessionCount + 1 : 1;
+            }
+            
+            updateDisplay();
+        }
+        
+        // Reset the timer
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            
+            if (isFocusMode) {
+                totalSeconds = focusTime;
+                startBtn.innerHTML = '<i class="fas fa-play"></i> Start Focus';
+            } else {
+                totalSeconds = breakTime;
+                startBtn.innerHTML = '<i class="fas fa-play"></i> Start Break';
+            }
+            
+            initialTime = totalSeconds;
+            updateDisplay();
+        }
+        
+        // Toggle dark/light mode
+        function toggleTheme() {
+            body.classList.toggle('light-mode');
+            const icon = modeToggle.querySelector('i');
+            
+            if (body.classList.contains('light-mode')) {
+                icon.className = 'fas fa-sun';
+                modeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            } else {
+                icon.className = 'fas fa-moon';
+                modeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+            }
+        }
+        
+        // Toggle full screen mode
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+                fullscreenToggle.innerHTML = '<i class="fas fa-compress"></i> Exit Full Screen';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    fullscreenToggle.innerHTML = '<i class="fas fa
