@@ -20,7 +20,3 @@ A responsive, web-based digital clock designed to help you track your study sess
 ## 🚀 Live Demo
 
 [View Live Demo](https://digital-study-clock.vercel.app/)  
-*(Replace with your deployed link, e.g., GitHub Pages or Vercel)*
-
-## 📂 Project Structure
-
