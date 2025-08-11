@@ -1,187 +1,74 @@
-/* Base Styles */
+:root {
+    --bg-color: #f9f5f0;
+    --text-color: #333;
+    --primary-color: #8b5fbf;
+    --secondary-color: #f0e6ff;
+    --container-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a2e;
+    --text-color: #e6e6e6;
+    --primary-color: #8b5fbf;
+    --secondary-color: #2a2a3c;
+    --container-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
 body {
     font-family: 'Arial', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #121212;
-    color: #fff;
     margin: 0;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s ease;
 }
 
-.controls {
-    margin-bottom: 20px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
+.container {
+    text-align: center;
+    background-color: var(--secondary-color);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: var(--container-shadow);
+    width: 300px;
 }
 
-button, select {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: #333;
+.timer-display {
+    font-size: 4rem;
+    font-weight: bold;
+    margin: 1rem 0;
+    color: var(--primary-color);
+}
+
+.controls button {
+    background: var(--primary-color);
     color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    margin: 0 0.5rem;
+    border-radius: 50%;
     cursor: pointer;
     font-size: 1rem;
-    transition: all 0.2s ease;
+    transition: transform 0.2s;
 }
 
-button:hover {
-    background-color: #444;
+.controls button:hover {
+    transform: scale(1.1);
 }
 
-.clock-container {
-    text-align: center;
-    background-color: #1e1e1e;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
+.session-type {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
 }
 
-.digital-clock {
-    font-size: 5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.ampm {
-    font-size: 2rem;
-    margin-left: 10px;
-    vertical-align: middle;
-}
-
-.date-display {
+.toggle-theme {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
     font-size: 1.5rem;
-    color: #aaa;
-}
-
-/* Number Animation */
-.digital-clock span {
-    display: inline-block;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    text-shadow: 0 0 10px #0ff;
-}
-
-.digital-clock span.changing {
-    transform: translateY(-10px);
-    opacity: 0;
-}
-
-/* Alarm Controls */
-.alarm-controls {
-    background-color: #1e1e1e;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    width: 300px;
-    max-width: 90%;
-}
-
-.alarm-controls h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-}
-
-.alarm-controls input[type="time"] {
-    padding: 8px;
-    border-radius: 5px;
-    border: none;
-    margin-right: 10px;
-    background-color: #333;
-    color: white;
-}
-
-/* Light Mode Styles */
-body.light-mode {
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-.light-mode .clock-container,
-.light-mode .alarm-controls {
-    background-color: #fff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.light-mode .date-display {
-    color: #666;
-}
-
-.light-mode .digital-clock span {
-    text-shadow: 0 0 5px #0077ff;
-}
-
-.light-mode button,
-.light-mode select,
-.light-mode input[type="time"] {
-    background-color: #ddd;
-    color: #333;
-}
-
-.light-mode button:hover {
-    background-color: #ccc;
-}
-
-/* Alarm Active State */
-.alarm-active {
-    animation: alarmFlash 0.5s infinite alternate;
-}
-
-@keyframes alarmFlash {
-    from { background-color: #121212; }
-    to { background-color: #ff0000; }
-}
-
-.light-mode.alarm-active {
-    animation: alarmFlashLight 0.5s infinite alternate;
-}
-
-@keyframes alarmFlashLight {
-    from { background-color: #f0f0f0; }
-    to { background-color: #ff9999; }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .digital-clock {
-        font-size: 3rem;
-    }
-    
-    .ampm {
-        font-size: 1.5rem;
-    }
-    
-    .date-display {
-        font-size: 1rem;
-    }
-    
-    .clock-container {
-        width: 90%;
-        padding: 20px;
-    }
-    
-    .alarm-controls {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-    }
-    
-    .alarm-controls input[type="time"] {
-        margin-right: 0;
-        margin-bottom: 10px;
-        width: 80%;
-    }
-    
-    .controls {
-        flex-direction: column;
-        align-items: center;
-    }
+    color: var(--text-color);
 }
