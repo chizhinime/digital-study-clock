@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const tasksCompleted = document.getElementById('tasksCompleted');
     const timerEndSound = document.getElementById('timerEndSound');
     const taskCompleteSound = document.getElementById('taskCompleteSound');
+    const digitalClock = document.getElementById('digitalClock');
 
     // Timer variables
     let timer;
@@ -49,6 +50,13 @@ document.addEventListener('DOMContentLoaded', function() {
     let minutes = settings.focusDuration;
     let seconds = 0;
     updateDisplay();
+
+    // Initialize digital clock
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Initialize timer mode
+    initTimerMode();
 
     // Event Listeners
     startBtn.addEventListener('click', startTimer);
@@ -139,32 +147,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function switchSession() {
         isFocusSession = !isFocusSession;
+        const timerContainer = document.getElementById('timerContainer');
+        
+        // Remove all mode classes
+        timerContainer.classList.remove('focus-mode', 'break-mode', 'long-break-mode');
         
         if (isFocusSession) {
-            // Increment session counter after completing a focus-break cycle
+            // Coming from break, starting focus session
             sessionCounter++;
             totalSessionsCompleted++;
+            timerContainer.classList.add('focus-mode');
+            sessionType.textContent = "Focus Session";
+            minutes = settings.focusDuration;
         } else {
-            // If it's a break after a focus session, update stats
-            if (sessionCounter > 1) {
-                updateStats();
+            // Going to break
+            const isLongBreak = sessionCounter % settings.sessionsBeforeLongBreak === 0;
+            if (isLongBreak) {
+                timerContainer.classList.add('long-break-mode');
+                sessionType.textContent = "Long Break";
+                minutes = settings.longBreakDuration;
+            } else {
+                timerContainer.classList.add('break-mode');
+                sessionType.textContent = "Short Break";
+                minutes = settings.breakDuration;
             }
         }
         
-        // Set time for next session
-        minutes = isFocusSession ? settings.focusDuration : 
-                 (sessionCounter % settings.sessionsBeforeLongBreak === 0 ? 
-                  settings.longBreakDuration : settings.breakDuration);
         seconds = 0;
-        
-        // Update UI
-        sessionType.textContent = isFocusSession ? "Focus Session" : 
-                                (sessionCounter % settings.sessionsBeforeLongBreak === 0 ? 
-                                 "Long Break" : "Short Break");
         sessionCount.textContent = `#${sessionCounter}`;
         updateDisplay();
+        updateStats();
         
-        // Auto-start next session if enabled
         if (settings.autoStartNextSession) {
             startTimer();
         }
@@ -178,6 +191,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const formattedMinutes = minutes.toString().padStart(2, '0');
         const formattedSeconds = seconds.toString().padStart(2, '0');
         timeDisplay.textContent = `${formattedMinutes}:${formattedSeconds}`;
+    }
+
+    // Digital Clock Function
+    function updateClock() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        digitalClock.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Initialize timer mode
+    function initTimerMode() {
+        const timerContainer = document.getElementById('timerContainer');
+        timerContainer.classList.add('focus-mode');
     }
 
     // Theme Functions
@@ -342,8 +370,4 @@ document.addEventListener('DOMContentLoaded', function() {
         totalFocusTime.textContent = Math.floor(totalMinutesFocused / 60);
         tasksCompleted.textContent = tasksCompletedCount;
     }
-
-    // Initialize UI
-    pauseBtn.disabled = true;
-    updateStats();
 });
