@@ -3,45 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Digital Clock</title>
+    <title>Aesthetic Study Timer</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="controls">
-        <button id="formatToggle">Switch to 24-hour</button>
-        <button id="themeToggle">Switch to Light Mode</button>
-        <select id="timezoneSelect">
-            <option value="local">Local Time</option>
-            <option value="UTC">UTC</option>
-            <option value="EST">EST (UTC-5)</option>
-            <option value="PST">PST (UTC-8)</option>
-            <option value="CET">CET (UTC+1)</option>
-        </select>
-    </div>
-
-    <div class="clock-container">
-        <div class="digital-clock">
-            <span id="hours">00</span>:
-            <span id="minutes">00</span>:
-            <span id="seconds">00</span>
-            <span id="ampm" class="ampm">AM</span>
+    <div class="container">
+        <div class="timer-display" id="time">25:00</div>
+        <div class="controls">
+            <button id="startBtn"><i class="fas fa-play"></i></button>
+            <button id="pauseBtn"><i class="fas fa-pause"></i></button>
+            <button id="resetBtn"><i class="fas fa-redo"></i></button>
         </div>
-        <div class="date-display">
-            <span id="day">Monday</span>,
-            <span id="month">January</span>
-            <span id="date">1</span>,
-            <span id="year">2023</span>
+        <div class="session-type" id="sessionType">Focus Session</div>
+        <div class="toggle-theme">
+            <i class="fas fa-moon" id="themeToggle"></i>
         </div>
     </div>
-
-    <div class="alarm-controls">
-        <h3>Set Alarm</h3>
-        <input type="time" id="alarmTime">
-        <button id="setAlarm">Set Alarm</button>
-        <button id="stopAlarm" disabled>Stop Alarm</button>
-        <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" loop></audio>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
