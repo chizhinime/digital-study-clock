@@ -546,8 +546,8 @@
             initialTime = totalSeconds;
             updateDisplay();
         }
-        
-        // Toggle dark/light mode
+    
+              // Toggle dark/light mode
         function toggleTheme() {
             body.classList.toggle('light-mode');
             const icon = modeToggle.querySelector('i');
@@ -571,4 +571,78 @@
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
-                    fullscreenToggle.innerHTML = '<i class="fas fa
+                    fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i> Full Screen';
+                }
+            }
+        }
+        
+        // Event Listeners
+        startBtn.addEventListener('click', toggleTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        skipBtn.addEventListener('click', () => {
+            if (isFocusMode) {
+                switchToBreak();
+            } else {
+                switchToFocus();
+            }
+        });
+        focusBtn.addEventListener('click', switchToFocus);
+        breakBtn.addEventListener('click', switchToBreak);
+        modeToggle.addEventListener('click', toggleTheme);
+        fullscreenToggle.addEventListener('click', toggleFullscreen);
+        
+        // Handle fullscreen change to update button text
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i> Full Screen';
+            }
+        });
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Toggle theme with 'T' key
+            if (e.key === 't' || e.key === 'T') {
+                toggleTheme();
+            }
+            
+            // Toggle fullscreen with 'F' key
+            if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+            
+            // Spacebar to start/pause
+            if (e.key === ' ') {
+                toggleTimer();
+                e.preventDefault(); // Prevent scrolling
+            }
+            
+            // R to reset
+            if (e.key === 'r' || e.key === 'R') {
+                resetTimer();
+            }
+        });
+        
+        // Create tech grid lines
+        function createCircuitLines() {
+            const container = document.querySelector('.clock-container');
+            for (let i = 0; i < 8; i++) {
+                const line = document.createElement('div');
+                line.className = 'circuit-line';
+                
+                // Random position and size
+                const top = Math.random() * 100;
+                const width = 30 + Math.random() * 70;
+                const left = Math.random() * 100;
+                
+                line.style.top = `${top}%`;
+                line.style.left = `${left}%`;
+                line.style.width = `${width}%`;
+                
+                container.appendChild(line);
+            }
+        }
+        
+        createCircuitLines();
+    </script>
+</body>
+</html>
