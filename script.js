@@ -1,123 +1,146 @@
-// State variables
-let is24HourFormat = false;
-let isDarkMode = false;
-let isFocusMode = false;
-let isBreakMode = false;
-let timerInterval;
-let timerEndTime;
+// DOM Elements
+const clock = document.getElementById('clock');
+const ampmElement = document.getElementById('ampm');
+const dateElement = document.getElementById('date');
+const progressBar = document.getElementById('progress-bar');
+const timerDisplay = document.getElementById('timer-display');
+const startFocusBtn = document.getElementById('start-focus');
+const startShortBreakBtn = document.getElementById('start-short-break');
+const startLongBreakBtn = document.getElementById('start-long-break');
+const pauseTimerBtn = document.getElementById('pause-timer');
+const resetTimerBtn = document.getElementById('reset-timer');
+const settingsBtn = document.getElementById('settings-btn');
+const settingsPanel = document.getElementById('settings-panel');
+const saveSettingsBtn = document.getElementById('save-settings');
+const sessionCounter = document.getElementById('session-counter');
+const fullscreenBtn = document.getElementById('fullscreen-btn');
+const studyTip = document.getElementById('study-tip');
+const darkModeBtn = document.getElementById('dark-mode-btn');
+const darkModeIcon = document.getElementById('dark-mode-icon');
+const darkModeCheckbox = document.getElementById('dark-mode');
+const timeFormatSelect = document.getElementById('time-format');
+const body = document.body;
+const orientationMessage = document.querySelector('.orientation-message');
+
+// Timer variables
+let timer;
+let timerRunning = false;
+let timerPaused = false;
 let timeLeft = 0;
 let totalTime = 0;
+let timerEndTime;
+let timerType = '';
+let sessionsCompleted = 0;
+let settings = {
+  focusDuration: 25,
+  shortBreakDuration: 5,
+  longBreakDuration: 15,
+  sessionsBeforeLongBreak: 4,
+  autoStart: false,
+  soundEnabled: true,
+  notificationsEnabled: true,
+  darkMode: false,
+  timeFormat: '12'
+};
 
-// DOM elements
-const clockEl = document.getElementById('clock');
-const dateEl = document.getElementById('date');
-const timerDisplay = document.getElementById('timer-display');
-const progressBar = document.getElementById('progress-bar');
-const toggleFormatBtn = document.getElementById('toggleFormat');
-const toggleThemeBtn = document.getElementById('toggleTheme');
-const startFocusBtn = document.getElementById('startFocus');
-const startBreakBtn = document.getElementById('startBreak');
-const pauseTimerBtn = document.getElementById('pauseTimer');
-const resetTimerBtn = document.getElementById('resetTimer');
-const formatText = document.getElementById('format-text');
-const formatIcon = document.getElementById('format-icon');
+// Study tips
+const studyTips = [
+  "Tip: Try the Pomodoro technique - focused work sessions followed by short breaks.",
+  "Tip: Eliminate distractions by putting your phone in another room.",
+  "Tip: Keep a notepad nearby to jot down distracting thoughts.",
+  "Tip: Stand up and stretch during your breaks to improve circulation.",
+  "Tip: Drink water regularly to stay hydrated and maintain focus.",
+  "Tip: Review what you've learned at the end of each study session.",
+  "Tip: Use active recall techniques instead of passive reading.",
+  "Tip: Organize your study space before starting for better focus."
+];
 
 // Initialize
-updateClock();
-setInterval(updateClock, 1000);
-checkDarkModePreference();
+function init() {
+  loadSettings();
+  updateClock();
+  updateSessionCounter();
+  setRandomStudyTip();
+  
+  // Set initial button states
+  pauseTimerBtn.disabled = true;
+  resetTimerBtn.disabled = true;
+  
+  // Request notification permission
+  if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+    Notification.requestPermission();
+  }
+  
+  // Check orientation on load
+  checkOrientation();
+  
+  // Add orientation change listener
+  window.addEventListener('resize', checkOrientation);
+}
 
-// Event listeners
-toggleFormatBtn.addEventListener('click', toggleTimeFormat);
-toggleThemeBtn.addEventListener('click', toggleDarkMode);
-startFocusBtn.addEventListener('click', () => startTimer(25 * 60, 'focus'));
-startBreakBtn.addEventListener('click', () => startTimer(5 * 60, 'break'));
-pauseTimerBtn.addEventListener('click', togglePauseTimer);
-resetTimerBtn.addEventListener('click', resetTimer);
-
-// Functions
+// Update clock with 12/24 hour format
 function updateClock() {
   const now = new Date();
   let hours = now.getHours();
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-  const seconds = now.getSeconds().toString().padStart(2, '0');
+  let minutes = now.getMinutes().toString().padStart(2, '0');
   let ampm = '';
-
-  if (!is24HourFormat) {
-    ampm = hours >= 12 ? ' PM' : ' AM';
+  
+  if (settings.timeFormat === '12') {
+    ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
-  }
-
-  clockEl.textContent = is24HourFormat 
-    ? `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`
-    : `${hours}:${minutes}${ampm}`;
-  
-  const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-  dateEl.textContent = now.toLocaleDateString(undefined, options);
-}
-
-function toggleTimeFormat() {
-  is24HourFormat = !is24HourFormat;
-  formatText.textContent = is24HourFormat ? '24-hour' : '12-hour';
-  formatIcon.textContent = is24HourFormat ? '🕟' : '🕛';
-  updateClock();
-}
-
-function toggleDarkMode() {
-  isDarkMode = !isDarkMode;
-  document.body.classList.toggle('dark-mode', isDarkMode);
-  toggleThemeBtn.textContent = isDarkMode ? '☀️' : '🌙';
-  localStorage.setItem('darkMode', isDarkMode);
-}
-
-function checkDarkModePreference() {
-  const savedMode = localStorage.getItem('darkMode');
-  if (savedMode === 'true') {
-    isDarkMode = true;
-    document.body.classList.add('dark-mode');
-    toggleThemeBtn.textContent = '☀️';
-  }
-}
-
-function startTimer(duration, mode) {
-  clearInterval(timerInterval);
-  
-  // Set mode
-  document.body.classList.remove('focus-mode', 'break-mode');
-  if (mode === 'focus') {
-    document.body.classList.add('focus-mode');
-    isFocusMode = true;
-    isBreakMode = false;
+    ampmElement.textContent = ampm;
+    ampmElement.style.display = 'block';
   } else {
-    document.body.classList.add('break-mode');
-    isBreakMode = true;
-    isFocusMode = false;
+    hours = hours.toString().padStart(2, '0');
+    ampmElement.style.display = 'none';
   }
   
-  // Timer setup
-  timeLeft = duration;
-  totalTime = duration;
-  timerEndTime = Date.now() + duration * 1000;
+  clock.textContent = `${hours}:${minutes}`;
   
-  // UI updates
-  document.body.classList.add('timer-active');
+  // Update date
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  dateElement.textContent = now.toLocaleDateString('en-US', options);
+  
+  // Update timer if running
+  if (timerRunning && !timerPaused) {
+    updateTimer();
+  }
+  
+  requestAnimationFrame(updateClock);
+}
+
+// Timer functions
+function startTimer(duration, type) {
+  clearInterval(timer);
+  timerRunning = true;
+  timerPaused = false;
+  timeLeft = duration * 60;
+  totalTime = timeLeft;
+  timerEndTime = Date.now() + timeLeft * 1000;
+  timerType = type;
+  
+  // Update UI
+  body.className = `${type.replace(' ', '-')}-mode ${settings.darkMode ? 'dark-mode' : ''}`;
   startFocusBtn.disabled = true;
-  startBreakBtn.disabled = true;
+  startShortBreakBtn.disabled = true;
+  startLongBreakBtn.disabled = true;
+  pauseTimerBtn.disabled = false;
+  resetTimerBtn.disabled = false;
+  pauseTimerBtn.textContent = 'Pause';
   
   updateTimerDisplay();
-  timerInterval = setInterval(updateTimer, 1000);
+  timer = setInterval(updateTimer, 1000);
 }
 
 function updateTimer() {
   const now = Date.now();
-  timeLeft = Math.max(0, Math.floor((timerEndTime - now) / 1000));
+  timeLeft = Math.max(0, Math.round((timerEndTime - now) / 1000));
+  
+  updateTimerDisplay();
   
   if (timeLeft <= 0) {
     timerComplete();
-    return;
   }
-  
-  updateTimerDisplay();
 }
 
 function updateTimerDisplay() {
@@ -125,43 +148,243 @@ function updateTimerDisplay() {
   const seconds = (timeLeft % 60).toString().padStart(2, '0');
   
   timerDisplay.textContent = `${minutes}:${seconds}`;
-  progressBar.style.width = `${100 - (timeLeft / totalTime * 100)}%`;
+  progressBar.style.width = `${((totalTime - timeLeft) / totalTime) * 100}%`;
 }
 
 function timerComplete() {
-  clearInterval(timerInterval);
-  timerDisplay.textContent = isFocusMode ? 'Time for a break!' : 'Ready to focus?';
-  progressBar.style.width = '100%';
+  clearInterval(timer);
+  timerRunning = false;
   
-  // Play sound
-  const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
-  audio.play();
+  // Play sound if enabled
+  if (settings.soundEnabled) {
+    const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+    audio.play();
+  }
   
-  // Reset after delay
-  setTimeout(() => {
-    resetTimer();
-  }, 5000);
+  // Show notification if enabled
+  if (settings.notificationsEnabled && Notification.permission === 'granted') {
+    new Notification(`Timer Complete!`, {
+      body: `Your ${timerType === 'focus' ? 'focus session' : timerType + ' break'} is over.`,
+      icon: 'https://cdn-icons-png.flaticon.com/512/3114/3114883.png'
+    });
+  }
+  
+  // Update session counter for focus sessions
+  if (timerType === 'focus') {
+    sessionsCompleted++;
+    updateSessionCounter();
+  }
+  
+  // Reset UI
+  body.className = settings.darkMode ? 'dark-mode' : '';
+  startFocusBtn.disabled = false;
+  startShortBreakBtn.disabled = false;
+  startLongBreakBtn.disabled = false;
+  pauseTimerBtn.disabled = true;
+  resetTimerBtn.disabled = true;
+  
+  // Flash timer display
+  let flashCount = 0;
+  const flashInterval = setInterval(() => {
+    timerDisplay.style.visibility = timerDisplay.style.visibility === 'hidden' ? 'visible' : 'hidden';
+    flashCount++;
+    
+    if (flashCount >= 6) {
+      clearInterval(flashInterval);
+      timerDisplay.style.visibility = 'visible';
+      
+      if (timerType === 'focus') {
+        const nextBreakType = sessionsCompleted % settings.sessionsBeforeLongBreak === 0 ? 'long' : 'short';
+        timerDisplay.textContent = `Time for ${nextBreakType} break!`;
+        
+        if (settings.autoStart) {
+          const breakDuration = nextBreakType === 'long' ? settings.longBreakDuration : settings.shortBreakDuration;
+          setTimeout(() => startTimer(breakDuration, `${nextBreakType} break`), 1500);
+        }
+      } else {
+        timerDisplay.textContent = 'Ready to focus?';
+        
+        if (settings.autoStart) {
+          setTimeout(() => startTimer(settings.focusDuration, 'focus'), 1500);
+        }
+      }
+    }
+  }, 500);
+  
+  // Set random study tip
+  setRandomStudyTip();
 }
 
-function togglePauseTimer() {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    pauseTimerBtn.innerHTML = '<span>▶️</span><span>Resume</span>';
-  } else {
+function pauseTimer() {
+  if (timerPaused) {
+    // Resume timer
     timerEndTime = Date.now() + timeLeft * 1000;
-    timerInterval = setInterval(updateTimer, 1000);
-    pauseTimerBtn.innerHTML = '<span>⏸️</span><span>Pause</span>';
+    timer = setInterval(updateTimer, 1000);
+    pauseTimerBtn.textContent = 'Pause';
+  } else {
+    // Pause timer
+    clearInterval(timer);
+    pauseTimerBtn.textContent = 'Resume';
   }
+  
+  timerPaused = !timerPaused;
 }
 
 function resetTimer() {
-  clearInterval(timerInterval);
-  document.body.classList.remove('timer-active', 'focus-mode', 'break-mode');
+  clearInterval(timer);
+  timerRunning = false;
+  timerPaused = false;
+  body.className = settings.darkMode ? 'dark-mode' : '';
+  startFocusBtn.disabled = false;
+  startShortBreakBtn.disabled = false;
+  startLongBreakBtn.disabled = false;
+  pauseTimerBtn.disabled = true;
+  resetTimerBtn.disabled = true;
   timerDisplay.textContent = '';
   progressBar.style.width = '0%';
-  startFocusBtn.disabled = false;
-  startBreakBtn.disabled = false;
-  isFocusMode = false;
-  isBreakMode = false;
 }
+
+// Settings functions
+function loadSettings() {
+  const savedSettings = localStorage.getItem('studyClockSettings');
+  if (savedSettings) {
+    settings = JSON.parse(savedSettings);
+    
+    // Update form inputs
+    document.getElementById('focus-duration').value = settings.focusDuration;
+    document.getElementById('short-break-duration').value = settings.shortBreakDuration;
+    document.getElementById('long-break-duration').value = settings.longBreakDuration;
+    document.getElementById('sessions-before-long-break').value = settings.sessionsBeforeLongBreak;
+    document.getElementById('auto-start').checked = settings.autoStart;
+    document.getElementById('sound-enabled').checked = settings.soundEnabled;
+    document.getElementById('notifications-enabled').checked = settings.notificationsEnabled;
+    document.getElementById('dark-mode').checked = settings.darkMode;
+    document.getElementById('time-format').value = settings.timeFormat;
+    
+    // Update button labels
+    updateTimerButtonLabels();
+    
+    // Apply dark mode if enabled
+    if (settings.darkMode) {
+      body.classList.add('dark-mode');
+      darkModeIcon.textContent = '☀️';
+    }
+    
+    // Apply time format
+    updateClock();
+  }
+}
+
+function saveSettings() {
+  settings = {
+    focusDuration: parseInt(document.getElementById('focus-duration').value) || 25,
+    shortBreakDuration: parseInt(document.getElementById('short-break-duration').value) || 5,
+    longBreakDuration: parseInt(document.getElementById('long-break-duration').value) || 15,
+    sessionsBeforeLongBreak: parseInt(document.getElementById('sessions-before-long-break').value) || 4,
+    autoStart: document.getElementById('auto-start').checked,
+    soundEnabled: document.getElementById('sound-enabled').checked,
+    notificationsEnabled: document.getElementById('notifications-enabled').checked,
+    darkMode: document.getElementById('dark-mode').checked,
+    timeFormat: document.getElementById('time-format').value
+  };
+  
+  localStorage.setItem('studyClockSettings', JSON.stringify(settings));
+  
+  // Update UI
+  updateTimerButtonLabels();
+  toggleDarkMode(settings.darkMode);
+  updateClock();
+  
+  // Hide settings panel
+  settingsPanel.classList.remove('show');
+}
+
+function updateTimerButtonLabels() {
+  startFocusBtn.textContent = `Start Focus (${settings.focusDuration}m)`;
+  startShortBreakBtn.textContent = `Short Break (${settings.shortBreakDuration}m)`;
+  startLongBreakBtn.textContent = `Long Break (${settings.longBreakDuration}m)`;
+}
+
+function toggleDarkMode(enable) {
+  if (enable) {
+    body.classList.add('dark-mode');
+    darkModeIcon.textContent = '☀️';
+  } else {
+    body.classList.remove('dark-mode');
+    darkModeIcon.textContent = '🌙';
+  }
+}
+
+// Helper functions
+function updateSessionCounter() {
+  sessionCounter.textContent = `Session: ${sessionsCompleted % settings.sessionsBeforeLongBreak}/${settings.sessionsBeforeLongBreak}`;
+}
+
+function setRandomStudyTip() {
+  studyTip.textContent = studyTips[Math.floor(Math.random() * studyTips.length)];
+}
+
+function checkOrientation() {
+  if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
+    orientationMessage.style.display = 'flex';
+  } else {
+    orientationMessage.style.display = 'none';
+  }
+}
+
+// Event listeners
+startFocusBtn.addEventListener('click', () => startTimer(settings.focusDuration, 'focus'));
+startShortBreakBtn.addEventListener('click', () => startTimer(settings.shortBreakDuration, 'short break'));
+startLongBreakBtn.addEventListener('click', () => startTimer(settings.longBreakDuration, 'long break'));
+pauseTimerBtn.addEventListener('click', pauseTimer);
+resetTimerBtn.addEventListener('click', resetTimer);
+settingsBtn.addEventListener('click', () => settingsPanel.classList.toggle('show'));
+saveSettingsBtn.addEventListener('click', saveSettings);
+fullscreenBtn.addEventListener('click', toggleFullscreen);
+darkModeBtn.addEventListener('click', () => {
+  settings.darkMode = !settings.darkMode;
+  localStorage.setItem('studyClockSettings', JSON.stringify(settings));
+  toggleDarkMode(settings.darkMode);
+  darkModeCheckbox.checked = settings.darkMode;
+});
+
+// Close settings when clicking outside
+document.addEventListener('click', (e) => {
+  if (!settingsPanel.contains(e.target) && e.target !== settingsBtn && e.target !== darkModeBtn) {
+    settingsPanel.classList.remove('show');
+  }
+});
+
+// Fullscreen functionality
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      console.log(`Error attempting to enable fullscreen: ${err.message}`);
+    });
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.key === ' ') { // Space bar to pause/resume
+    if (!pauseTimerBtn.disabled) {
+      pauseTimer();
+    }
+  } else if (e.key === 'Escape') { // Escape to exit fullscreen
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  } else if (e.key === 'd' || e.key === 'D') { // D for dark mode
+    settings.darkMode = !settings.darkMode;
+    localStorage.setItem('studyClockSettings', JSON.stringify(settings));
+    toggleDarkMode(settings.darkMode);
+    darkModeCheckbox.checked = settings.darkMode;
+  }
+});
+
+// Initialize the app
+init();
