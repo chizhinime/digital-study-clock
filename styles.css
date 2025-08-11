@@ -1,113 +1,337 @@
 :root {
-      --bg-color: #f8f9fa;
-      --text-color: #495057;
-      --border-color: #dee2e6;
-      --shadow-color: rgba(0, 0, 0, 0.1);
-      --focus-color: #4dabf7;
-      --break-color: #51cf66;
-      --button-bg: #ffffff;
-      --button-hover: #f1f3f5;
-      --transition: all 0.3s ease;
-      --settings-bg: rgba(255, 255, 255, 0.95);
-      --settings-text: #495057;
-    }
+  --bg-color: #f8f9fa;
+  --text-color: #495057;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --focus-color: #4dabf7;
+  --break-color: #51cf66;
+  --button-bg: #ffffff;
+  --button-hover: #f1f3f5;
+  --transition: all 0.3s ease;
+  --settings-bg: rgba(255, 255, 255, 0.95);
+  --settings-text: #495057;
+}
 
-    body.dark-mode {
-      --bg-color: #212529;
-      --text-color: #e9ecef;
-      --border-color: #495057;
-      --shadow-color: rgba(0, 0, 0, 0.3);
-      --focus-color: #339af0;
-      --break-color: #40c057;
-      --button-bg: #343a40;
-      --button-hover: #495057;
-      --settings-bg: rgba(33, 37, 41, 0.95);
-      --settings-text: #e9ecef;
-    }
+body.dark-mode {
+  --bg-color: #212529;
+  --text-color: #e9ecef;
+  --border-color: #495057;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --focus-color: #339af0;
+  --break-color: #40c057;
+  --button-bg: #343a40;
+  --button-hover: #495057;
+  --settings-bg: rgba(33, 37, 41, 0.95);
+  --settings-text: #e9ecef;
+}
 
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      margin: 0;
-      transition: var(--transition);
-      padding: 20px;
-    }
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  margin: 0;
+  transition: var(--transition);
+  padding: 20px;
+}
 
-    .clock-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 500px;
-    }
+.clock-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+}
 
-    #clock {
-      font-size: 4.5rem;
-      font-weight: 300;
-      letter-spacing: -1px;
-      padding: 25px 40px;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      background-color: transparent;
-      box-shadow: 0 4px 12px var(--shadow-color);
-      margin-bottom: 15px;
-      text-align: center;
-      min-width: 320px;
-      transition: var(--transition);
-    }
+#clock {
+  font-size: 4.5rem;
+  font-weight: 300;
+  letter-spacing: -1px;
+  padding: 25px 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background-color: transparent;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  margin-bottom: 15px;
+  text-align: center;
+  min-width: 320px;
+  transition: var(--transition);
+}
 
-    #date {
-      font-size: 1.3rem;
-      margin-bottom: 30px;
-      font-weight: 400;
-      color: var(--text-color);
-      opacity: 0.8;
-      transition: var(--transition);
-    }
+#date {
+  font-size: 1.3rem;
+  margin-bottom: 30px;
+  font-weight: 400;
+  color: var(--text-color);
+  opacity: 0.8;
+  transition: var(--transition);
+}
 
-    .controls {
-      display: flex;
-      gap: 12px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-    }
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
 
-    button {
-      background: var(--button-bg);
-      color: var(--text-color);
-      border: 1px solid var(--border-color);
-      padding: 10px 18px;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: var(--transition);
-      min-width: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
+button {
+  background: var(--button-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 10px 18px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 
-    button:hover {
-      background: var(--button-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px var(--shadow-color);
-    }
+button:hover {
+  background: var(--button-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow-color);
+}
 
-    button:active {
-      transform: translateY(0);
-    }
+button:active {
+  transform: translateY(0);
+}
 
-    #toggleTheme, #toggleSettings, #toggleFullscreen {
-      position: absolute;
+#toggleTheme, #toggleSettings, #toggleFullscreen {
+  position: absolute;
+  min-width: auto;
+  padding: 8px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+#toggleTheme {
+  top: 20px;
+  right: 20px;
+}
+
+#toggleSettings {
+  top: 20px;
+  left: 20px;
+}
+
+#toggleFullscreen {
+  top: 70px;
+  right: 20px;
+}
+
+.focus-mode #clock {
+  color: var(--focus-color);
+  border-color: var(--focus-color);
+  box-shadow: 0 0 20px rgba(77, 171, 247, 0.3);
+}
+
+.break-mode #clock {
+  color: var(--break-color);
+  border-color: var(--break-color);
+  box-shadow: 0 0 20px rgba(81, 207, 102, 0.3);
+}
+
+.focus-mode #date,
+.break-mode #date {
+  opacity: 0.6;
+}
+
+.timer-controls {
+  display: none;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.timer-active .timer-controls {
+  display: flex;
+}
+
+#timer-display {
+  font-size: 1.5rem;
+  margin: 15px 0;
+  font-weight: 500;
+}
+
+.progress-container {
+  width: 100%;
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 3px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: var(--focus-color);
+  transition: width 0.5s linear;
+}
+
+.break-mode #progress-bar {
+  background-color: var(--break-color);
+}
+
+/* Settings panel */
+.settings-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--settings-bg);
+  color: var(--settings-text);
+  z-index: 100;
+  padding: 20px;
+  box-sizing: border-box;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.settings-panel.open {
+  transform: translateY(0);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.close-settings {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--settings-text);
+}
+
+.settings-group {
+  margin-bottom: 20px;
+}
+
+.settings-group-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.setting-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.setting-option label {
+  flex-grow: 1;
+  margin-right: 15px;
+}
+
+.setting-option input[type="number"] {
+  width: 60px;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-bg);
+  color: var(--text-color);
+}
+
+.setting-option select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--button-bg);
+  color: var(--text-color);
+}
+
+.save-settings {
+  margin-top: auto;
+  padding: 12px;
+  font-size: 1rem;
+  background-color: var(--focus-color);
+  color: white;
+  border: none;
+}
+
+.save-settings:hover {
+  background-color: var(--button-hover);
+  color: var(--text-color);
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  #clock {
+    font-size: 3.5rem;
+    padding: 20px 30px;
+    min-width: 280px;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  button {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .settings-panel {
+    padding: 15px;
+  }
+}
+
+@media (max-height: 600px) {
+  .clock-container {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-height: 500px) {
+  .clock-container {
+    transform: scale(0.8);
+  }
+}
+
+/* Fullscreen styles */
+body:fullscreen {
+  padding: 0;
+}
+
+body:fullscreen .clock-container {
+  transform: scale(1.2);
+}
+
+@media (max-width: 400px) {
+  #clock {
+    font-size: 2.8rem;
+    min-width: 240px;
+  }
+      }      position: absolute;
       min-width: auto;
       padding: 8px;
       border-radius: 50%;
