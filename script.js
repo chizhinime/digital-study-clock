@@ -44,12 +44,25 @@ document.addEventListener('DOMContentLoaded', function() {
         playSounds: true
     };
 
-    // Load settings from localStorage
-    loadSettings();
+    // Timer state for persistence
+    let timerState = {
+        minutes: settings.focusDuration,
+        seconds: 0,
+        isRunning: false,
+        isFocusSession: true,
+        sessionCounter: 1
+    };
+
+    // Load all data from localStorage
+    loadAllData();
 
     // Initialize timer with settings
-    let minutes = settings.focusDuration;
-    let seconds = 0;
+    let minutes = timerState.minutes;
+    let seconds = timerState.seconds;
+    isRunning = timerState.isRunning;
+    isFocusSession = timerState.isFocusSession;
+    sessionCounter = timerState.sessionCounter;
+    
     updateDisplay();
 
     // Initialize clock and date
@@ -58,6 +71,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize timer mode
     initTimerMode();
+
+    // If timer was running when page was closed, restart it
+    if (isRunning) {
+        startTimer();
+    }
 
     // Event Listeners
     startBtn.addEventListener('click', startTimer);
@@ -73,9 +91,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') addTask();
     });
 
-    // Load tasks from localStorage
-    loadTasks();
-
     // Timer Functions
     function startTimer() {
         if (!isRunning) {
@@ -83,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
             timer = setInterval(updateTime, 1000);
             startBtn.disabled = true;
             pauseBtn.disabled = false;
+            saveTimerState();
         }
     }
 
@@ -91,6 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isRunning = false;
         startBtn.disabled = false;
         pauseBtn.disabled = true;
+        saveTimerState();
     }
 
     function resetTimer() {
@@ -100,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   settings.longBreakDuration : settings.breakDuration);
         seconds = 0;
         updateDisplay();
+        saveTimerState();
     }
 
     function updateTime() {
@@ -119,9 +137,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isFocusSession) {
             totalMinutesFocused++;
             updateStats();
+            saveStats();
         }
         
         updateDisplay();
+        saveTimerState();
     }
 
     function sessionEnded() {
@@ -178,6 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionCount.textContent = `#${sessionCounter}`;
         updateDisplay();
         updateStats();
+        saveTimerState();
+        saveStats();
         
         if (settings.autoStartNextSession) {
             startTimer();
@@ -218,7 +240,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize timer mode
     function initTimerMode() {
         const timerContainer = document.getElementById('timerContainer');
-        timerContainer.classList.add('focus-mode');
+        if (isFocusSession) {
+            timerContainer.classList.add('focus-mode');
+            sessionType.textContent = "Focus Session";
+        } else {
+            const isLongBreak = sessionCounter % settings.sessionsBeforeLongBreak === 0;
+            if (isLongBreak) {
+                timerContainer.classList.add('long-break-mode');
+                sessionType.textContent = "Long Break";
+            } else {
+                timerContainer.classList.add('break-mode');
+                sessionType.textContent = "Short Break";
+            }
+        }
+        sessionCount.textContent = `#${sessionCounter}`;
     }
 
     // Theme Functions
@@ -228,13 +263,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.setAttribute('data-theme', newTheme);
         themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         localStorage.setItem('theme', newTheme);
-    }
-
-    // Check for saved theme preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.body.setAttribute('data-theme', savedTheme);
-        themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     }
 
     // Settings Functions
@@ -275,6 +303,47 @@ document.addEventListener('DOMContentLoaded', function() {
         const savedSettings = localStorage.getItem('pomodoroSettings');
         if (savedSettings) {
             settings = JSON.parse(savedSettings);
+        }
+    }
+
+    // Timer State Functions
+    function saveTimerState() {
+        const timerState = {
+            minutes: minutes,
+            seconds: seconds,
+            isRunning: isRunning,
+            isFocusSession: isFocusSession,
+            sessionCounter: sessionCounter
+        };
+        localStorage.setItem('pomodoroTimerState', JSON.stringify(timerState));
+    }
+
+    function loadTimerState() {
+        const savedTimerState = localStorage.getItem('pomodoroTimerState');
+        if (savedTimerState) {
+            const state = JSON.parse(savedTimerState);
+            timerState = state;
+        }
+    }
+
+    // Stats Functions
+    function saveStats() {
+        const stats = {
+            totalSessionsCompleted: totalSessionsCompleted,
+            totalMinutesFocused: totalMinutesFocused,
+            tasksCompletedCount: tasksCompletedCount
+        };
+        localStorage.setItem('pomodoroStats', JSON.stringify(stats));
+    }
+
+    function loadStats() {
+        const savedStats = localStorage.getItem('pomodoroStats');
+        if (savedStats) {
+            const stats = JSON.parse(savedStats);
+            totalSessionsCompleted = stats.totalSessionsCompleted || 0;
+            totalMinutesFocused = stats.totalMinutesFocused || 0;
+            tasksCompletedCount = stats.tasksCompletedCount || 0;
+            updateStats();
         }
     }
 
@@ -328,6 +397,7 @@ document.addEventListener('DOMContentLoaded', function() {
         completedTasks.textContent = completed;
         tasksCompletedCount = completed;
         updateStats();
+        saveStats();
     }
 
     function saveTasks() {
@@ -383,4 +453,33 @@ document.addEventListener('DOMContentLoaded', function() {
         totalFocusTime.textContent = Math.floor(totalMinutesFocused / 60);
         tasksCompleted.textContent = tasksCompletedCount;
     }
+
+    // Load all data from localStorage
+    function loadAllData() {
+        // Load theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
+            themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        }
+        
+        // Load settings
+        loadSettings();
+        
+        // Load timer state
+        loadTimerState();
+        
+        // Load stats
+        loadStats();
+        
+        // Load tasks
+        loadTasks();
+    }
+
+    // Save all data when page is about to be unloaded
+    window.addEventListener('beforeunload', function() {
+        saveTimerState();
+        saveStats();
+        saveTasks();
+    });
 });
