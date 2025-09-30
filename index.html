@@ -17,13 +17,24 @@
             </div>
             <h1>Study Timer</h1>
             <div class="header-controls">
-                <button id="themeToggle" class="theme-toggle">
+                <button id="fullscreenToggle" class="fullscreen-toggle" title="Toggle Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button id="themeToggle" class="theme-toggle" title="Toggle Theme">
                     <i class="fas fa-moon"></i>
                 </button>
-                <button id="settingsToggle" class="settings-toggle">
+                <button id="settingsToggle" class="settings-toggle" title="Settings">
                     <i class="fas fa-cog"></i>
                 </button>
             </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
         </div>
 
         <div class="timer-container focus-mode" id="timerContainer">
@@ -32,92 +43,210 @@
                 <span id="sessionType">Focus Session</span>
                 <span id="sessionCount">#1</span>
             </div>
+            
+            <!-- Timer Controls -->
             <div class="timer-controls">
-                <button id="startBtn" class="control-btn">
+                <button id="startBtn" class="control-btn" title="Start">
                     <i class="fas fa-play"></i>
                 </button>
-                <button id="pauseBtn" class="control-btn" disabled>
+                <button id="pauseBtn" class="control-btn" disabled title="Pause">
                     <i class="fas fa-pause"></i>
                 </button>
-                <button id="resetBtn" class="control-btn">
+                <button id="resetBtn" class="control-btn" title="Reset">
                     <i class="fas fa-redo"></i>
                 </button>
-                <button id="skipBtn" class="control-btn">
+                <button id="skipBtn" class="control-btn" title="Skip Session">
                     <i class="fas fa-forward"></i>
                 </button>
             </div>
-        </div>
 
-        <div class="tasks-container">
-            <h2>Tasks</h2>
-            <div class="task-input">
-                <input type="text" id="taskInput" placeholder="Add a new task...">
-                <button id="addTaskBtn"><i class="fas fa-plus"></i></button>
-            </div>
-            <ul class="task-list" id="taskList"></ul>
-            <div class="task-stats">
-                <span id="completedTasks">0</span>/<span id="totalTasks">0</span> tasks completed
+            <!-- Quick Session Buttons -->
+            <div class="quick-sessions">
+                <button class="quick-btn" data-minutes="15">15 min</button>
+                <button class="quick-btn" data-minutes="25">25 min</button>
+                <button class="quick-btn" data-minutes="45">45 min</button>
+                <button class="quick-btn" data-minutes="60">60 min</button>
             </div>
         </div>
 
-        <div class="stats-container">
-            <h2>Today's Progress</h2>
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-value" id="focusSessions">0</span>
-                    <span class="stat-label">Focus Sessions</span>
+        <!-- Goals Section -->
+        <div class="goals-container">
+            <h2>Daily Goals <span class="goals-progress" id="goalsProgress">0/3</span></h2>
+            <div class="goals-list">
+                <div class="goal-item">
+                    <input type="checkbox" id="goal1" class="goal-checkbox">
+                    <label for="goal1">Complete 3 focus sessions</label>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="totalFocusTime">0</span>
-                    <span class="stat-label">Minutes Focused</span>
+                <div class="goal-item">
+                    <input type="checkbox" id="goal2" class="goal-checkbox">
+                    <label for="goal2">Focus for 60 minutes</label>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="tasksCompleted">0</span>
-                    <span class="stat-label">Tasks Done</span>
+                <div class="goal-item">
+                    <input type="checkbox" id="goal3" class="goal-checkbox">
+                    <label for="goal3">Complete 5 tasks</label>
                 </div>
             </div>
         </div>
 
+        <div class="main-content">
+            <div class="tasks-container">
+                <h2>Tasks <span class="tasks-count">(<span id="totalTasks">0</span>)</span></h2>
+                <div class="task-input">
+                    <input type="text" id="taskInput" placeholder="Add a new task...">
+                    <button id="addTaskBtn" class="add-btn"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                <div class="task-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+                <ul class="task-list" id="taskList"></ul>
+                <div class="task-stats">
+                    <span id="completedTasks">0</span> of <span id="totalTasksCount">0</span> tasks completed
+                    <button id="clearCompleted" class="clear-btn">Clear Completed</button>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <h2>Today's Progress</h2>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="focusSessions">0</span>
+                        <span class="stat-label">Focus Sessions</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalFocusTime">0</span>
+                        <span class="stat-label">Minutes Focused</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="tasksCompleted">0</span>
+                        <span class="stat-label">Tasks Done</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="productivityScore">0</span>
+                        <span class="stat-label">Productivity</span>
+                    </div>
+                </div>
+                
+                <!-- Weekly Stats -->
+                <div class="weekly-stats">
+                    <h3>Weekly Overview</h3>
+                    <div class="week-bars" id="weekBars">
+                        <!-- Generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quotes Section -->
+        <div class="quotes-container">
+            <div class="quote-text" id="quoteText">"The secret of getting ahead is getting started."</div>
+            <div class="quote-author" id="quoteAuthor">- Mark Twain</div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="notification" id="notification">
+            <div class="notification-content">
+                <span id="notificationMessage"></span>
+                <button id="closeNotification"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
         <div class="settings-modal" id="settingsModal">
             <div class="settings-content">
                 <h2>Settings</h2>
-                <div class="setting-group">
-                    <label for="focusDuration">Focus Duration (minutes):</label>
-                    <input type="number" id="focusDuration" min="1" max="60" value="25">
+                
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="timer">Timer</button>
+                    <button class="tab-btn" data-tab="notifications">Notifications</button>
+                    <button class="tab-btn" data-tab="appearance">Appearance</button>
                 </div>
-                <div class="setting-group">
-                    <label for="breakDuration">Break Duration (minutes):</label>
-                    <input type="number" id="breakDuration" min="1" max="30" value="5">
+
+                <div class="tab-content active" id="timer-tab">
+                    <div class="setting-group">
+                        <label for="focusDuration">Focus Duration (minutes):</label>
+                        <input type="number" id="focusDuration" min="5" max="120" value="25">
+                    </div>
+                    <div class="setting-group">
+                        <label for="breakDuration">Break Duration (minutes):</label>
+                        <input type="number" id="breakDuration" min="1" max="30" value="5">
+                    </div>
+                    <div class="setting-group">
+                        <label for="longBreakDuration">Long Break Duration (minutes):</label>
+                        <input type="number" id="longBreakDuration" min="5" max="60" value="15">
+                    </div>
+                    <div class="setting-group">
+                        <label for="sessionsBeforeLongBreak">Sessions before long break:</label>
+                        <input type="number" id="sessionsBeforeLongBreak" min="1" max="10" value="4">
+                    </div>
                 </div>
-                <div class="setting-group">
-                    <label for="longBreakDuration">Long Break Duration (minutes):</label>
-                    <input type="number" id="longBreakDuration" min="1" max="60" value="15">
+
+                <div class="tab-content" id="notifications-tab">
+                    <div class="setting-group">
+                        <label>
+                            <input type="checkbox" id="autoStartNextSession">
+                            Auto-start next session
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <label>
+                            <input type="checkbox" id="playSounds" checked>
+                            Play notification sounds
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <label>
+                            <input type="checkbox" id="desktopNotifications" checked>
+                            Show desktop notifications
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <label for="notificationVolume">Notification Volume:</label>
+                        <input type="range" id="notificationVolume" min="0" max="100" value="50">
+                        <span id="volumeValue">50%</span>
+                    </div>
                 </div>
-                <div class="setting-group">
-                    <label for="sessionsBeforeLongBreak">Sessions before long break:</label>
-                    <input type="number" id="sessionsBeforeLongBreak" min="1" max="10" value="4">
+
+                <div class="tab-content" id="appearance-tab">
+                    <div class="setting-group">
+                        <label for="fontSize">Font Size:</label>
+                        <select id="fontSize">
+                            <option value="small">Small</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="colorTheme">Color Theme:</label>
+                        <select id="colorTheme">
+                            <option value="default">Default Purple</option>
+                            <option value="blue">Ocean Blue</option>
+                            <option value="green">Forest Green</option>
+                            <option value="red">Crimson Red</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label>
+                            <input type="checkbox" id="reduceMotion">
+                            Reduce animations
+                        </label>
+                    </div>
                 </div>
-                <div class="setting-group">
-                    <label>
-                        <input type="checkbox" id="autoStartNextSession">
-                        Auto-start next session
-                    </label>
-                </div>
-                <div class="setting-group">
-                    <label>
-                        <input type="checkbox" id="playSounds" checked>
-                        Play notification sounds
-                    </label>
-                </div>
+
                 <div class="settings-buttons">
-                    <button id="saveSettingsBtn">Save</button>
-                    <button id="cancelSettingsBtn">Cancel</button>
+                    <button id="exportDataBtn" class="secondary-btn">Export Data</button>
+                    <button id="resetDataBtn" class="secondary-btn">Reset All Data</button>
+                    <button id="saveSettingsBtn" class="primary-btn">Save Settings</button>
+                    <button id="cancelSettingsBtn" class="secondary-btn">Cancel</button>
                 </div>
             </div>
         </div>
 
+        <!-- Audio Elements -->
         <audio id="timerEndSound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"></audio>
         <audio id="taskCompleteSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+        <audio id="sessionStartSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
     </div>
 
     <script src="script.js"></script>
